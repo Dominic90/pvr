@@ -21,7 +21,7 @@ public class Control extends Thread {
 			block.calculate(0, 0, 0, Main.x, Main.y, Main.z);
 			block.updateValues(0, 0, 0, Main.x, Main.y, Main.z);
 			block.updateHeadmap();
-			System.out.println(i);
+			System.out.println("Iteraion: " + i);
 		}
 	}
 }

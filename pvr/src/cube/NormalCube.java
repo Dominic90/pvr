@@ -2,6 +2,8 @@ package cube;
 
 public class NormalCube implements ICube {
 
+	private static final double alpha = 0.2;
+	
 	private double currentTemp = 0;
 	private double newTemp = 0;
 	
@@ -22,11 +24,11 @@ public class NormalCube implements ICube {
 	
 	@Override
 	public void setNewTemp(ICube[][][] block, int x, int y, int z) {
-		double factor = 0.01 * 1 / (1 * 1); // alpha, delta t, delta s 
+		double factor = alpha * 1 / (1 * 1); // alpha, delta t, delta s 
 		double sum = block[x+1][y][z].getCurrentTemp() + block[x-1][y][z].getCurrentTemp() + 
 				block[x][y+1][z].getCurrentTemp() + block[x][y-1][z].getCurrentTemp() + 
 				block[x][y][z+1].getCurrentTemp() + block[x][y][z-1].getCurrentTemp()
-				+ 6 * block[x][y][z].getCurrentTemp();
+				- 6 * block[x][y][z].getCurrentTemp();
 		newTemp = block[x][y][z].getCurrentTemp() + factor * sum;
 	}
 	
