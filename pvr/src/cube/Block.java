@@ -72,6 +72,7 @@ public class Block {
 						headmap.update(x, y, block[x][y][middleZ].getCurrentTemp());
 					}
 				}
+				System.out.println("end");
 			}
 		});
 	}
