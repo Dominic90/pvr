@@ -24,6 +24,9 @@ public class Block {
 		else if (Main.type == EType.MIDDLE) {
 			setMiddleHeat();
 		}
+		else {
+			setBorderSinus();
+		}
 	}
 	
 	private void createBlock() {
@@ -63,8 +66,16 @@ public class Block {
 				for (int z = startZ; z < endZ; z++) {
 					block[x][y][z] = new BorderCube();
 					block[x][y][z].setInitTemp(100);
-//					System.out.println(block[x][y][z].getCurrentTemp());
 				}
+			}
+		}
+	}
+	
+	private void setBorderSinus() {
+//		block[0][0][0] = new SinusHeatCube();
+		for (int x = 0; x < block.length; x ++) {
+			for (int z = 0; z < block[x][0].length; z++) {
+				block[x][0][z] = new SinusHeatCube();
 			}
 		}
 	}

@@ -53,6 +53,7 @@ public class MainPane extends ScrollPane {
 			headmap[x][y].setFill(Color.web(red + green + blue));
 		}
 		catch (Exception e) {
+			headmap[x][y].setFill(Color.web(red.substring(red.length() - 2) + green.substring(green.length() - 2) + blue.substring(blue.length() - 2)));
 			System.out.println("ERROR: " + red + " " + green + " " + blue);
 		}
 //		String colorCode = "";

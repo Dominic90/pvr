@@ -11,9 +11,8 @@ public class Main extends Application {
 	public static final int x = 100;
 	public static final int y = 100;
 	public static final int z = 100;
-	
-	public static EType type = EType.MIDDLE;
-	
+	public static EType type = EType.BORDER_SINUS;
+	public static final int THREADS = 2;
 	public static final int iterations = 10000;
     
 	private Stage primayStage;
@@ -33,9 +32,9 @@ public class Main extends Application {
         pane.setLayoutY(0);
         pane.setPrefWidth(800);
         pane.setPrefHeight(600);
-        new Control(pane).start();
         root.getChildren().add(pane);
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
+        new Control(pane).start();
     }
 }
