@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 import ui.MainPane;
 
 public class Main extends Application {
-	
+
 	public static final int x = 500;
 	public static final int y = 500;
 	public static final int z = 500;

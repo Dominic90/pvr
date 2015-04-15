@@ -37,16 +37,16 @@ public class MainPane extends ScrollPane {
 		if (temp < 20) {
 			colorCode = "#0000FF";
 		}
-		else if (temp > 20 && temp < 40) {
+		else if (temp >= 20 && temp < 40) {
 			colorCode = "#00FFFF";
 		}
-		else if (temp > 40 && temp < 60) {
+		else if (temp >= 40 && temp < 60) {
 			colorCode = "#FFFF00";
 		}
-		else if (temp > 60 && temp < 80) {
+		else if (temp >= 60 && temp < 80) {
 			colorCode = "#FF0000";
 		}
-		else if (temp > 80) {
+		else if (temp >= 80) {
 			colorCode = "#FFFFFF";
 		}
 		headmap[x][y].setFill(Color.web(colorCode));
