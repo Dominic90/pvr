@@ -22,6 +22,12 @@ public class Control extends Thread {
 			block.updateValues(0, 0, 0, Main.x, Main.y, Main.z);
 			block.updateHeadmap();
 			System.out.println("Iteraion: " + i);
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 	}
 }

@@ -2,7 +2,7 @@ package cube;
 
 public class NormalCube implements ICube {
 
-	private static final double alpha = 0.2;
+	private static final double alpha = 0.1;
 	
 	private double currentTemp = 0;
 	private double newTemp = 0;

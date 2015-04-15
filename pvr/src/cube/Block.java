@@ -1,10 +1,13 @@
 package cube;
 
 import javafx.application.Platform;
+import main.EType;
 import main.Main;
 import ui.MainPane;
 
 public class Block {
+	
+	private static final int DIFF_TO_CENTER = 5;
 	
 	private MainPane headmap;
 	private ICube[][][] block;
@@ -15,7 +18,12 @@ public class Block {
 		this.headmap = headmap;
 		block = new ICube[Main.x][Main.y][Main.z];
 		createBlock();
-		setInitHeat();
+		if (Main.type == EType.BORDER) {
+			setBorderHeat();			
+		}
+		else if (Main.type == EType.MIDDLE) {
+			setMiddleHeat();
+		}
 	}
 	
 	private void createBlock() {
@@ -34,10 +42,29 @@ public class Block {
 		}
 	}
 	
-	private void setInitHeat() {
+	private void setBorderHeat() {
 		for (int x = 0; x < block.length; x ++) {
 			for (int z = 0; z < block[x][0].length; z++) {
 				block[x][0][z].setInitTemp(100);
+			}
+		}
+	}
+	
+	private void setMiddleHeat() {
+		int startX = Main.x / 2 - DIFF_TO_CENTER;
+		int endX = Main.x / 2 + DIFF_TO_CENTER;
+		int startY = Main.y / 2 - DIFF_TO_CENTER;
+		int endY = Main.y / 2 + DIFF_TO_CENTER;
+		int startZ = Main.z / 2 - DIFF_TO_CENTER;
+		int endZ = Main.z / 2 + DIFF_TO_CENTER;
+		
+		for (int x = startX; x < endX; x ++) {
+			for (int y = startY; y < endY; y++) {
+				for (int z = startZ; z < endZ; z++) {
+					block[x][y][z] = new BorderCube();
+					block[x][y][z].setInitTemp(100);
+//					System.out.println(block[x][y][z].getCurrentTemp());
+				}
 			}
 		}
 	}

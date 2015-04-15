@@ -33,22 +33,44 @@ public class MainPane extends ScrollPane {
 	}
 	
 	public void update(int x, int y, double temp) {
-		String colorCode = "";
-		if (temp < 20) {
-			colorCode = "#0000FF";
+		double ratio = 2 * (temp - 0) / (100 - 0);
+		int b = Math.max(0, (int)(255*(1-ratio)));
+		int r = Math.max(0, (int)(255*(ratio-1)));
+		int g = 255 - b - r;
+		String blue = Integer.toHexString(b);
+		String red = Integer.toHexString(r);
+		String green = Integer.toHexString(g);
+		if (blue.length() < 2) {
+			blue = "0" + blue;
 		}
-		else if (temp >= 20 && temp < 40) {
-			colorCode = "#00FFFF";
+		if (red.length() < 2) {
+			red = "0" + red;
 		}
-		else if (temp >= 40 && temp < 60) {
-			colorCode = "#FFFF00";
+		if (green.length() < 2) {
+			green = "0" + green;
 		}
-		else if (temp >= 60 && temp < 80) {
-			colorCode = "#FF0000";
+		try {
+			headmap[x][y].setFill(Color.web(red + green + blue));
 		}
-		else if (temp >= 80) {
-			colorCode = "#FFFFFF";
+		catch (Exception e) {
+			System.out.println("ERROR: " + red + " " + green + " " + blue);
 		}
-		headmap[x][y].setFill(Color.web(colorCode));
+//		String colorCode = "";
+//		if (temp < 20) {
+//			colorCode = "#0000FF";
+//		}
+//		else if (temp >= 20 && temp < 40) {
+//			colorCode = "#00FFFF";
+//		}
+//		else if (temp >= 40 && temp < 60) {
+//			colorCode = "#FFFF00";
+//		}
+//		else if (temp >= 60 && temp < 80) {
+//			colorCode = "#FF0000";
+//		}
+//		else if (temp >= 80) {
+//			colorCode = "#FFFFFF";
+//		}
+//		headmap[x][y].setFill(Color.web(colorCode));
 	}
 }
