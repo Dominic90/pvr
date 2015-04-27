@@ -2,24 +2,24 @@ package cube;
 
 public class BorderCube implements ICube {
 
-	private double temp = 0;
+	private float temp = 0;
 	
 	public BorderCube() {
 		
 	}
 
 	@Override
-	public double getCurrentTemp() {
+	public float getCurrentTemp() {
 		return temp;
 	}
 	
 	@Override
-	public void setInitTemp(double temp) {
+	public void setInitTemp(float temp) {
 		this.temp = temp;
 	}
 	
 	@Override
-	public void setNewTemp(double temp) {
+	public void setNewTemp(float temp) {
 		
 	}
 	

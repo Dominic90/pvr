@@ -3,7 +3,7 @@ package cube;
 public class SinusHeatCube implements ICube {
 
 	private static final int STEP_WIDHT = 64;
-	private double temp = 0;
+	private float temp = 0;
 	private int iteration = 0;
 	
 	public SinusHeatCube() {
@@ -11,16 +11,16 @@ public class SinusHeatCube implements ICube {
 	}
 
 	@Override
-	public double getCurrentTemp() {
+	public float getCurrentTemp() {
 		return temp;
 	}
 	
 	@Override
-	public void setInitTemp(double temp) {
+	public void setInitTemp(float temp) {
 	}
 	
 	@Override
-	public void setNewTemp(double temp) {
+	public void setNewTemp(float temp) {
 		
 	}
 	
@@ -28,7 +28,7 @@ public class SinusHeatCube implements ICube {
 	public void setNewTemp(ICube[][][] block, int x, int y, int z) {
 		iteration = iteration % STEP_WIDHT;
 		iteration = iteration + 1;
-		temp = Math.sin(Math.PI * ((double)iteration / STEP_WIDHT)) * 100;
+		temp = (float)Math.sin(Math.PI * ((float)iteration / STEP_WIDHT)) * 100;
 	}
 	
 	@Override

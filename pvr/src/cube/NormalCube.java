@@ -2,30 +2,30 @@ package cube;
 
 public class NormalCube implements ICube {
 
-	private static final double alpha = 0.1;
+	private static final float alpha = (float)0.1;
 	
-	private double currentTemp = 0;
-	private double newTemp = 0;
+	private float currentTemp = 0;
+	private float newTemp = 0;
 	
 	@Override
-	public double getCurrentTemp() {
+	public float getCurrentTemp() {
 		return currentTemp;
 	}
 	
 	@Override
-	public void setInitTemp(double temp) {
+	public void setInitTemp(float temp) {
 		this.currentTemp = temp;
 	}
 	
 	@Override
-	public void setNewTemp(double temp) {
+	public void setNewTemp(float temp) {
 		newTemp = temp;
 	}
 	
 	@Override
 	public void setNewTemp(ICube[][][] block, int x, int y, int z) {
-		double factor = alpha * 1 / (1 * 1); // alpha, delta t, delta s 
-		double sum = block[x+1][y][z].getCurrentTemp() + block[x-1][y][z].getCurrentTemp() + 
+		float factor = alpha * 1 / (1 * 1); // alpha, delta t, delta s 
+		float sum = block[x+1][y][z].getCurrentTemp() + block[x-1][y][z].getCurrentTemp() + 
 				block[x][y+1][z].getCurrentTemp() + block[x][y-1][z].getCurrentTemp() + 
 				block[x][y][z+1].getCurrentTemp() + block[x][y][z-1].getCurrentTemp()
 				- 6 * block[x][y][z].getCurrentTemp();

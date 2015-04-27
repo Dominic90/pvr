@@ -32,8 +32,8 @@ public class MainPane extends ScrollPane {
 		}
 	}
 	
-	public void update(int x, int y, double temp) {
-		double ratio = 2 * (temp - 0) / (100 - 0);
+	public void update(int x, int y, float temp) {
+		float ratio = 2 * (temp - 0) / (100 - 0);
 		int b = Math.max(0, (int)(255*(1-ratio)));
 		int r = Math.max(0, (int)(255*(ratio-1)));
 		int g = 255 - b - r;
