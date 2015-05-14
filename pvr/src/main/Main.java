@@ -8,9 +8,9 @@ import ui.MainPane;
 
 public class Main extends Application {
 
-	public static final int x = 500;
-	public static final int y = 500;
-	public static final int z = 500;
+	public static final int x = 100;
+	public static final int y = 100;
+	public static final int z = 100;
 	public static EType type = EType.BORDER;
 	public static final int THREADS = 2;
 	public static final int iterations = 10000;

@@ -10,7 +10,10 @@ public class Block {
 	private static final int DIFF_TO_CENTER = 5;
 	
 	private ICube[][][] block;
-	private int middleZ;
+	private int middleY;
+	
+	private int skipStartX = 0;
+	private int skipEndX = 0;
 	
 	private NodeDimension dimension;
 	
@@ -30,12 +33,18 @@ public class Block {
 //		}
 //	}
 	
-	public Block(NodeDimension dimension) {
+	public Block(NodeDimension dimension, boolean hasLowerX, boolean hasHigherX) {
 		this.dimension = dimension;
-		middleZ = dimension.getMaxZ() / 2;
-		int xSize = dimension.getEndX() - dimension.getStartX();
+		middleY = dimension.getMaxY() / 2;
+		int xSize = dimension.getEndX() - dimension.getStartX() + 2; // TODO oversize depending on higher and lower x
 		System.out.println("Size of X: " + xSize);
 		block = new ICube[xSize][dimension.getMaxY()][dimension.getMaxZ()];
+		if (hasLowerX) {
+			skipStartX = 1;
+		}
+		if (hasHigherX) {
+			skipEndX = 1;
+		}
 		createBlock();
 		setBorderHeat();
 	}
@@ -44,9 +53,13 @@ public class Block {
 		for (int x = 0; x < block.length; x ++) {
 			for (int y = 0; y < block[x].length; y++) {
 				for (int z = 0; z < block[x][y].length; z++) {
-					if (x == 0 || y == 0 || z == 0 || 
-							x == block.length - 1 || y == block[x].length - 1 || z == block[x][y].length - 1) {
+					if ((x == 0 && dimension.getStartX() == 0) || y == 0 || z == 0 || 
+							(x == block.length - 1 && dimension.getEndX() == dimension.getMaxX() - 1) || 
+							y == block[x].length - 1 || z == block[x][y].length - 1) {
 						block[x][y][z] = new BorderCube();
+//						if ((x == block.length - 1 && dimension.getEndX() - dimension.getStartX() == block.length - 1)) {
+//							System.out.println("Border!!!");
+//						}
 					}
 					else {
 						block[x][y][z] = new NormalCube();						
@@ -58,8 +71,8 @@ public class Block {
 	
 	private void setBorderHeat() {
 		for (int x = 0; x < block.length; x ++) {
-			for (int z = 0; z < block[x][0].length; z++) {
-				block[x][0][z].setInitTemp(100);
+			for (int y = 0; y < block[x].length; y++) {
+				block[x][y][0].setInitTemp(100);
 			}
 		}
 	}
@@ -90,18 +103,9 @@ public class Block {
 		}
 	}
 	
-//	public void calculate(int startX, int startY, int startZ, int endX, int endY, int endZ) {
-//		for (int x = startX; x < endX; x ++) {
-//			for (int y = startY; y < endY; y++) {
-//				for (int z = startZ; z < endZ; z++) {
-//					block[x][y][z].setNewTemp(block, x, y, z);
-//				}
-//			}
-//		}
-//	}
-	
 	public void calculate() {
-		for (int x = 0; x < block.length; x ++) {
+		System.out.println("Skip Start: " + skipStartX + " Skip End: " + skipEndX);
+		for (int x = skipStartX; x < block.length - skipEndX; x ++) {
 			for (int y = 0; y < block[x].length; y++) {
 				for (int z = 0; z < block[x][y].length; z++) {
 					block[x][y][z].setNewTemp(block, x, y, z);
@@ -109,16 +113,6 @@ public class Block {
 			}
 		}
 	}
-	
-//	public void updateValues(int startX, int startY, int startZ, int endX, int endY, int endZ) {
-//		for (int x = startX; x < endX; x ++) {
-//			for (int y = startY; y < endY; y++) {
-//				for (int z = startZ; z < endZ; z++) {
-//					block[x][y][z].updateTemp();
-//				}
-//			}
-//		}
-//	}
 	
 	public void updateValues() {
 		for (int x = 0; x < block.length; x ++) {
@@ -130,25 +124,10 @@ public class Block {
 		}
 	}
 	
-//	public void updateHeadmap() {
-//		Platform.runLater(new Runnable() {
-//			
-//			@Override
-//			public void run() {
-//				for (int x = 0; x < block.length; x ++) {
-//					for (int y = 0; y < block[x].length; y++) {
-////						headmap.update(x, y, block[x][y][middleZ].getCurrentTemp());
-//					}
-//				}
-//				System.out.println("end");
-//			}
-//		});
-//	}
-	
 	public void send(DataOutputStream dos) throws IOException {
-		for (int x = 0; x < block.length; x ++) {
-			for (int y = 0; y < block[x].length; y++) {
-				dos.writeFloat(block[x][y][middleZ].getCurrentTemp());
+		for (int x = skipStartX; x < block.length - skipEndX; x ++) {
+			for (int z = 0; z < block[x][middleY].length; z++) {
+				dos.writeFloat(block[x][middleY][z].getCurrentTemp());
 			}
 			dos.flush();
 		}

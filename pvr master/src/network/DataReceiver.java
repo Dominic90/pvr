@@ -7,20 +7,28 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.CyclicBarrier;
 
 import ui.MainPane;
 
 public class DataReceiver extends Thread {
 
+	private SocketInformation serverSocket;
 	private MainPane pane;
 	private double[][] nodeArea;
+	private int startX;
 	private int sizeX;
 	private int sizeY;
-	// TODO needs barrier
+	private CyclicBarrier barrier;
 	
-	public DataReceiver(NodeDimension dimension) {
-		sizeX = dimension.getEndX() - dimension.getStartX();
+	private int counter = 0;
+	
+	public DataReceiver(NodeDimension dimension, SocketInformation serverSocket, CyclicBarrier barrier) {
+		startX = dimension.getStartX();
+		sizeX = dimension.getEndX() - dimension.getStartX() + 1;
 		sizeY = dimension.getMaxY();
+		this.serverSocket = serverSocket;
+		this.barrier = barrier;
 		nodeArea = new double[sizeX][sizeY];
 	}
 	
@@ -31,7 +39,8 @@ public class DataReceiver extends Thread {
 	@Override
 	public void run() {
 		while (true) {
-			
+			System.out.println("Node: " + startX + " " + counter);
+			counter++;
 			// TODO: put to top when worker is optimized
 			ServerSocket clientConnect = null;
 			Socket client = null;
@@ -39,26 +48,25 @@ public class DataReceiver extends Thread {
 			DataOutputStream dos = null;
 			try {
 				// wait for data
-				clientConnect = new ServerSocket(8080); //TODO: custom port
+				clientConnect = new ServerSocket(serverSocket.getPort());
 				client = clientConnect.accept(); // blocks
 		        dis = new DataInputStream(
 		                new BufferedInputStream(client.getInputStream()));
 		       
-		        System.out.println(dis.readUTF());
 		        for (int x = 0; x < sizeX; x++) {
 		        	for (int y = 0; y < sizeY; y++) {
 		        		double d = dis.readFloat();
 		        		nodeArea[x][y] = d;
-//		        		System.out.println(d);
 		        	}
 		        }
 		        
 		        // update heatmap
-				pane.update(nodeArea);
+				pane.update(nodeArea, startX);
 				
 				// wait till all nodes received data
 				// TODO: barrier
-		        
+		        barrier.await();
+				
 				// inform node to proceed
 		        dos = new DataOutputStream( 
 						new BufferedOutputStream(client.getOutputStream()));

@@ -6,22 +6,28 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.CyclicBarrier;
 
 public class Node {
-	private SocketInformation ownSocket;
+	private SocketInformation nodeSocket;
+	private SocketInformation serverSocket;
 	private SocketInformation lowerXSocket;
 	private SocketInformation higherXSocket;
 	private NodeDimension dimension;
+	private CyclicBarrier barrier;
 	
 	private DataReceiver receiver;
 	
-	public Node(SocketInformation ownSocket, SocketInformation lowerXSocket, SocketInformation higherXSocket, NodeDimension dimension) {
-		this.ownSocket = ownSocket;
+	public Node(SocketInformation nodeSocket, SocketInformation serverSocket, SocketInformation lowerXSocket, 
+			SocketInformation higherXSocket, NodeDimension dimension, CyclicBarrier barrier) {
+		this.nodeSocket = nodeSocket;
+		this.serverSocket = serverSocket;
 		this.lowerXSocket = lowerXSocket;
 		this.higherXSocket = higherXSocket;
 		this.dimension = dimension;
+		this.barrier = barrier;
 		
-		receiver = new DataReceiver(dimension);
+		receiver = new DataReceiver(dimension, serverSocket, barrier);
 	}
 	
 	public DataReceiver getReceiver() {
@@ -33,10 +39,11 @@ public class Node {
 		DataOutputStream dos = null;
 		DataInputStream dis = null;
 		try {
-			sender = new Socket("localhost", 8081);
+			sender = new Socket(nodeSocket.getIp(), nodeSocket.getPort());
 			if ( sender != null && sender.isConnected() ) {
 				dos = new DataOutputStream( 
 						new BufferedOutputStream(sender.getOutputStream()));
+				sendServerSocket(dos);
 				sendLowerXSocket(dos);
 				sendHigherXSocket(dos);
 				sendNodeDimensions(dos);
@@ -61,6 +68,12 @@ public class Node {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private void sendServerSocket(DataOutputStream dos) throws IOException {
+		dos.writeUTF(serverSocket.getIp());
+		dos.writeInt(serverSocket.getPort());
+		dos.flush();
 	}
 	
 	private void sendLowerXSocket(DataOutputStream dos) throws IOException {
@@ -90,6 +103,7 @@ public class Node {
 	private void sendNodeDimensions(DataOutputStream dos) throws IOException {
 		dos.writeInt(dimension.getStartX());
 		dos.writeInt(dimension.getEndX());
+		dos.writeInt(dimension.getMaxX());
 		dos.writeInt(dimension.getMaxY());
 		dos.writeInt(dimension.getMaxZ());
 		dos.flush();
@@ -99,7 +113,7 @@ public class Node {
 		Socket sender = null;
 		DataOutputStream dos = null;
 		try {
-			sender = new Socket("localhost", 8081);
+			sender = new Socket(nodeSocket.getIp(), nodeSocket.getPort());
 			if ( sender != null && sender.isConnected() ) {
 				dos = new DataOutputStream( 
 						new BufferedOutputStream( sender.getOutputStream() ));

@@ -33,14 +33,15 @@ public class MainPane extends ScrollPane {
 		}
 	}
 	
-	public void update(final double[][] nodeArea) {
+	public void update(final double[][] nodeArea, int startX) {
 		Platform.runLater(new Runnable() {
 			
 			@Override
 			public void run() {
+				System.out.println("node area lenght: " + nodeArea.length);
 				for (int x = 0; x < nodeArea.length; x++) {
 		        	for (int y = 0; y < nodeArea[x].length; y++) {
-		        		update(x, y, (float)nodeArea[x][y]);
+		        		update(x + startX, y, (float)nodeArea[x][y]);
 		        	}
 		        }
 			}

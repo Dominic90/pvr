@@ -2,6 +2,7 @@ package main;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CyclicBarrier;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -31,9 +32,29 @@ public class Main extends Application {
 		y = 100;
 		z = 100;
 		type = EType.BORDER;
+		List<SocketInformation> sockets = new ArrayList<SocketInformation>();
+		sockets.add(new SocketInformation("localhost", 8081));
+		sockets.add(new SocketInformation("localhost", 8082));
+//		sockets.add(new SocketInformation("localhost", 8083));
+//		sockets.add(new SocketInformation("localhost", 8084));
 		nodes = new ArrayList<Node>();
-		Node node = new Node(new SocketInformation("localhost", 8081), null, null, new NodeDimension(0, 100, y, z));
-		nodes.add(node);
+		int xSize = x / sockets.size();
+		CyclicBarrier barrier = new CyclicBarrier(sockets.size());
+		for (int i = 0; i < sockets.size(); i++) {
+			int startX = xSize * i;
+			int endX = xSize * i + xSize - 1;
+			SocketInformation lower = null;
+			if (i > 0) {
+				lower = sockets.get(i - 1);
+			}
+			SocketInformation higher = null;
+			if (i < sockets.size() - 1 && sockets.size() > 1) {
+				higher = sockets.get(i + 1);
+			}
+			Node node = new Node(sockets.get(i), new SocketInformation("localhost", 7000 + i), 
+					lower, higher, new NodeDimension(startX, endX, x, y, z), barrier);
+			nodes.add(node);
+		}
 	}
 
 	@Override

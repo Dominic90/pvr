@@ -10,20 +10,15 @@ public class Controller extends Thread {
 	private NodeDimension dimension;
 	private Block block;
 	
-	public Controller() {
-		networkHandler = new NetworkHandler();
+	public Controller(int port) {
+		this.networkHandler = new NetworkHandler(port, this);
 	}
 	
 	@Override
 	public void run() {
 		System.out.println(1);
-		synchronized (this) {
-			try {
-				Thread.currentThread().wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}			
-		}
+		networkHandler.waitForInitInformation();
+		networkHandler.waitForStartCommand();
 		block.test();
 		System.out.println(2);
 		networkHandler.setBlock(block);
@@ -36,9 +31,9 @@ public class Controller extends Thread {
 		}
 	}
 	
-	public void createBlock(NodeDimension dimension) {
+	public void createBlock(NodeDimension dimension, boolean hasLowerX, boolean hasHigherX) {
 		this.dimension = dimension;
-		block = new Block(dimension);
+		block = new Block(dimension, hasLowerX, hasHigherX);
 		System.out.println("End create of block");
 	}
 }

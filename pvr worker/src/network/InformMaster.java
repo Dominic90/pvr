@@ -12,9 +12,11 @@ import cube.Block;
 public class InformMaster extends Thread {
 
 	private Block block;
+	private SocketInformation serverSocket;
 	
-	public InformMaster(Block block) {
+	public InformMaster(Block block, SocketInformation serverSocket) {
 		this.block = block;
+		this.serverSocket = serverSocket;
 	}
 	
 	@Override
@@ -23,12 +25,11 @@ public class InformMaster extends Thread {
 		DataOutputStream dos = null;
 		DataInputStream dis = null;
 		try {
-			sender = new Socket("localhost", 8080);
+			sender = new Socket(serverSocket.getIp(), serverSocket.getPort());
 			if ( sender != null && sender.isConnected() ) {
 				dos = new DataOutputStream( 
 						new BufferedOutputStream(sender.getOutputStream()));
 				
-				dos.writeUTF("hello");
 				block.send(dos);
 				
 				

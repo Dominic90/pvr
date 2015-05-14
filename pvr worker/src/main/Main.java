@@ -1,14 +1,12 @@
 package main;
 
-import network.InitServer;
 
 public class Main {
 	
+	public static final int port = 8081;
+	
 	public static void main(String args[]) {
-		Controller controller = new Controller();
+		Controller controller = new Controller(port);
 		controller.start();
-		InitServer init = new InitServer(8081, controller);
-		init.waitForInitInformation();
-		init.waitForStartCommand();
 	}
 }

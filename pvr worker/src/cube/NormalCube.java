@@ -24,7 +24,7 @@ public class NormalCube implements ICube {
 	
 	@Override
 	public void setNewTemp(ICube[][][] block, int x, int y, int z) {
-		float factor = alpha * 1 / (1 * 1); // alpha, delta t, delta s 
+		float factor = alpha * 1 / (1 * 1);
 		float sum = block[x+1][y][z].getCurrentTemp() + block[x-1][y][z].getCurrentTemp() + 
 				block[x][y+1][z].getCurrentTemp() + block[x][y-1][z].getCurrentTemp() + 
 				block[x][y][z+1].getCurrentTemp() + block[x][y][z-1].getCurrentTemp()
