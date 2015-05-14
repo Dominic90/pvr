@@ -1,0 +1,5 @@
+Init:
+- Server sendet startX, endX, maxY, maxZ
+- Server sendet Socket kleinerX und größerX
+
+- Instanziierung immer um 1 größer, außer x = 0 oder x = max, dann X = Border
