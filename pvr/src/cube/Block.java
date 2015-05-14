@@ -72,7 +72,6 @@ public class Block {
 	}
 	
 	private void setBorderSinus() {
-//		block[0][0][0] = new SinusHeatCube();
 		for (int x = 0; x < block.length; x ++) {
 			for (int z = 0; z < block[x][0].length; z++) {
 				block[x][0][z] = new SinusHeatCube();
