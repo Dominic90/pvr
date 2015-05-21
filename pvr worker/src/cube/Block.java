@@ -1,5 +1,6 @@
 package cube;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -124,13 +125,35 @@ public class Block {
 		}
 	}
 	
-	public void send(DataOutputStream dos) throws IOException {
+	public void sendToMaster(DataOutputStream dos) throws IOException {
 		for (int x = skipStartX; x < block.length - skipEndX; x ++) {
 			for (int z = 0; z < block[x][middleY].length; z++) {
 				dos.writeFloat(block[x][middleY][z].getCurrentTemp());
 			}
 			dos.flush();
 		}
+	}
+	
+	public void sendToNeighbor(int x, DataOutputStream dos) throws IOException {
+		for (int y = 0; y < block[x].length; y++) {
+			for (int z = 0; z < block[y].length; z++) {
+				dos.writeFloat(block[x][y][z].getCurrentTemp());
+			}
+			dos.flush();
+		}
+	}
+	
+	public void receiveFromNeighbor(int x, DataInputStream dis) throws IOException {
+		for (int y = 0; y < block[x].length; y++) {
+			for (int z = 0; z < block[y].length; z++) {
+				block[x][y][z].setNewTemp(dis.readFloat());
+				block[x][y][z].updateTemp();
+			}
+		}
+	}
+	
+	public int getBlockXSize() {
+		return block.length - 1;
 	}
 	
 	public void test() {

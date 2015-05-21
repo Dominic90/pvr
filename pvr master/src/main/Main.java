@@ -33,8 +33,8 @@ public class Main extends Application {
 		z = 100;
 		type = EType.BORDER;
 		List<SocketInformation> sockets = new ArrayList<SocketInformation>();
-		sockets.add(new SocketInformation("localhost", 8081));
-		sockets.add(new SocketInformation("localhost", 8082));
+		sockets.add(new SocketInformation("localhost", 8000));
+//		sockets.add(new SocketInformation("localhost", 8010));
 //		sockets.add(new SocketInformation("localhost", 8083));
 //		sockets.add(new SocketInformation("localhost", 8084));
 		nodes = new ArrayList<Node>();

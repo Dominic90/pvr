@@ -1,24 +1,25 @@
 package network;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.CyclicBarrier;
 
 import cube.Block;
 
-public abstract class InformNeighbor extends Thread {
+public class InformHigherXNeighbor extends Thread {
 
 	protected Block block;
 	protected SocketInformation clientSocket;
 	protected int port;
+	protected CyclicBarrier barrier;
 	
-	public InformNeighbor(Block block, SocketInformation clientSocket, int port) {
+	public InformHigherXNeighbor(Block block, SocketInformation clientSocket, int port, CyclicBarrier barrier) {
 		this.block = block;
 		this.clientSocket = clientSocket;
 		this.port = port;
+		this.barrier = barrier;
 	}
 	
 	@Override
@@ -27,7 +28,7 @@ public abstract class InformNeighbor extends Thread {
 		DataOutputStream dos = null;
 		DataInputStream dis = null;
 		try {
-			sendAndReceive(dos, dis);
+//			sendAndReceive(dos, dis);
         }
         catch ( Exception e ) {
             e.printStackTrace();
@@ -48,6 +49,12 @@ public abstract class InformNeighbor extends Thread {
 			}
 		}
 	}
-	
-	protected abstract void sendAndReceive(DataOutputStream dos, DataInputStream dis) throws Exception;
+
+//	@Override
+//	protected void sendAndReceive(DataOutputStream dos, DataInputStream dis)
+//			throws Exception {
+//		block.sendToNeighbor(block.getBlockXSize(), dos);
+//		block.receiveFromNeighbor(block.getBlockXSize(), dis);
+//	}
+
 }

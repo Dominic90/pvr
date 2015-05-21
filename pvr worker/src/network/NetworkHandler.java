@@ -9,6 +9,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 import main.Controller;
 import cube.Block;
@@ -18,11 +20,15 @@ public class NetworkHandler {
 	private int port;
 	private Controller controller;
 	private Block block;
-	private InformMaster informMaster;
 	
 	private SocketInformation serverSocket;
 	private SocketInformation lowerXSocket;
 	private SocketInformation higherXSocket;
+	
+	private CyclicBarrier barrier;
+	private InformMaster informMaster;
+	private InformLowerXNeighbor informLower;
+	private InformHigherXNeighbor informHigher;
 	
 	public NetworkHandler(int port, Controller controller) {
 		this.port = port;
@@ -43,6 +49,8 @@ public class NetworkHandler {
 	        receiveLowerXSocket(dis);
 	        receiveHigherXSocket(dis);
 	        receiveNodeDimension(dis);
+	        
+	        createInformThreads();
 	        
 	        dos = new DataOutputStream( 
 					new BufferedOutputStream(client.getOutputStream()));
@@ -118,9 +126,15 @@ public class NetworkHandler {
         if (higherXSocket != null) {
         	hasHigherX = true;
         }
-        controller.createBlock(dimension, hasLowerX, hasHigherX);
+        block = controller.createBlock(dimension, hasLowerX, hasHigherX);
         
         System.out.println(startX + " " + endX + " " +  maxY + " " + maxZ);
+	}
+	
+	private void createInformThreads() {
+		barrier = new CyclicBarrier(2);
+		informMaster = new InformMaster(block, serverSocket, barrier);
+		informMaster.start();
 	}
 	
 	public void waitForStartCommand() {
@@ -159,29 +173,39 @@ public class NetworkHandler {
 	}
 	
 	public void setEndIteration() {
-		List<Thread> threads = new ArrayList<Thread>();
-		// thread sent lowerX
-		if (lowerXSocket != null) {
-			
+		try {
+			barrier.await();
+			barrier.await();
+		} catch (InterruptedException | BrokenBarrierException e) {
+			e.printStackTrace();
 		}
+//		List<Thread> threads = new ArrayList<Thread>();
+		// thread sent lowerX
+//		if (lowerXSocket != null) {
+//			InformLowerXNeighbor informLower = new InformLowerXNeighbor(block, lowerXSocket);
+//			threads.add(informLower);
+//			informLower.start();
+//		}
 		
 		// thread sent higherX
-		if (higherXSocket != null) {
-			
-		}
+//		if (higherXSocket != null) {
+//			InformHigherXNeighbor informHeigher = new InformHigherXNeighbor(block, higherXSocket);
+//			threads.add(informHeigher);
+//			informHeigher.start();
+//		}
 		
 		// thread inform master
-		informMaster = new InformMaster(block, serverSocket);
-		threads.add(informMaster);
-		informMaster.start();
-		
-		for (Thread thread : threads) {
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+//		informMaster = new InformMaster(block, serverSocket);
+//		threads.add(informMaster);
+//		informMaster.start();
+//		
+//		for (Thread thread : threads) {
+//			try {
+//				thread.join();
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
 	}
 	
 	public void setBlock(Block block) {

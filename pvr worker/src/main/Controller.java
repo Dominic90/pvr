@@ -31,10 +31,11 @@ public class Controller extends Thread {
 		}
 	}
 	
-	public void createBlock(NodeDimension dimension, boolean hasLowerX, boolean hasHigherX) {
+	public Block createBlock(NodeDimension dimension, boolean hasLowerX, boolean hasHigherX) {
 		this.dimension = dimension;
 		block = new Block(dimension, hasLowerX, hasHigherX);
 		System.out.println("End create of block");
+		return block;
 	}
 }
 
