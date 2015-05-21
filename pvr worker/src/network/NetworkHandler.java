@@ -160,9 +160,15 @@ public class NetworkHandler {
 	
 	public void setEndIteration() {
 		List<Thread> threads = new ArrayList<Thread>();
-		// thread sent left
+		// thread sent lowerX
+		if (lowerXSocket != null) {
+			
+		}
 		
-		// thread sent right
+		// thread sent higherX
+		if (higherXSocket != null) {
+			
+		}
 		
 		// thread inform master
 		informMaster = new InformMaster(block, serverSocket);

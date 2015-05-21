@@ -52,6 +52,9 @@ public class InformMaster extends Thread {
 				if (dos != null) {
 					dos.close();
 				}
+				if (dis != null) {
+					dis.close();
+				}
 				if (sender != null) {
 					sender.close();
 				}
