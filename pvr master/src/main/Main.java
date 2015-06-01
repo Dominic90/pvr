@@ -22,6 +22,8 @@ public class Main extends Application {
 	public static List<Node> nodes;
 	public static int iterations = 10;
 	
+	private static CyclicBarrier barrier;
+	
 	public static void main(String args[]) {
 		processArgs(args);
 		launch(args);
@@ -34,12 +36,12 @@ public class Main extends Application {
 		type = EType.BORDER;
 		List<SocketInformation> sockets = new ArrayList<SocketInformation>();
 		sockets.add(new SocketInformation("localhost", 8000));
-//		sockets.add(new SocketInformation("localhost", 8010));
+		sockets.add(new SocketInformation("localhost", 8010));
 //		sockets.add(new SocketInformation("localhost", 8083));
 //		sockets.add(new SocketInformation("localhost", 8084));
 		nodes = new ArrayList<Node>();
 		int xSize = x / sockets.size();
-		CyclicBarrier barrier = new CyclicBarrier(sockets.size());
+		barrier = new CyclicBarrier(sockets.size() + 1);
 		for (int i = 0; i < sockets.size(); i++) {
 			int startX = xSize * i;
 			int endX = xSize * i + xSize - 1;
@@ -62,9 +64,9 @@ public class Main extends Application {
         primaryStage.setTitle("Heatmap!");
         StackPane root = new StackPane();
         MainPane pane = new MainPane();
-        for (Node node : nodes) {
-        	node.getReceiver().setPane(pane);
-        }
+//        for (Node node : nodes) {
+//        	node.getReceiver().setPane(pane);
+//        }
         pane.setLayoutX(0);
         pane.setLayoutY(0);
         pane.setPrefWidth(800);
@@ -72,6 +74,6 @@ public class Main extends Application {
         root.getChildren().add(pane);
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
-        new Controller().start();
+        new Controller(pane, barrier).start();
 	}
 }

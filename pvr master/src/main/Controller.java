@@ -1,28 +1,53 @@
 package main;
 
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+
 import network.Node;
+import ui.MainPane;
 
 public class Controller extends Thread {
 
-	public Controller() {
-		
+	private MainPane pane;
+	private CyclicBarrier barrier;
+	
+	public Controller(MainPane pane, CyclicBarrier barrier) {
+		this.pane = pane;
+		this.barrier = barrier;
 	}
 	
 	@Override
 	public void run() {
+		setName("Controller Thread");
 		initializeNodes();
+		receiveData();
 	}
 	
 	private void initializeNodes() {
 		for (Node node : Main.nodes) {
-			node.initalizeNode();
+			node.initalizeNode(pane);
 		}
-		for (Node node : Main.nodes) {
-			node.start();
+		try {
+			System.out.println("in cont");
+			barrier.await();
+			while (true) {
+				barrier.await();
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (BrokenBarrierException e) {
+			e.printStackTrace();
 		}
+//		for (Node node : Main.nodes) {
+//			node.start();
+//		}
+//		
+//		for (Node node : Main.nodes) {
+//			node.receiveData();
+//		}
+	}
+	
+	private void receiveData() {
 		
-		for (Node node : Main.nodes) {
-			node.receiveData();
-		}
 	}
 }
