@@ -26,7 +26,6 @@ public class Controller extends Thread {
 				e.printStackTrace();
 			}
 		}
-//		networkHandler.waitForStartCommand();
 		block.test();
 		System.out.println(2);
 		networkHandler.setBlock(block);

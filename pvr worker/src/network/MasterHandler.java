@@ -17,7 +17,6 @@ public class MasterHandler extends Thread {
 
 	private Thread controllerThread;
 	private Controller controller;
-	private int port;
 	private CyclicBarrier barrier;
 	
 	private ServerSocket clientConnect;
@@ -25,7 +24,6 @@ public class MasterHandler extends Thread {
 	private DataInputStream dis;
 	private DataOutputStream dos;
 	
-	private SocketInformation serverSocket;
 	private SocketInformation lowerXSocket;
 	private SocketInformation higherXSocket;
 	private Block block;
@@ -33,7 +31,6 @@ public class MasterHandler extends Thread {
 	public MasterHandler(Thread controllerThread, Controller controller, int port, CyclicBarrier barrier) {
 		this.controllerThread = controllerThread;
 		this.controller = controller;
-		this.port = port;
 		this.barrier = barrier;
 		try {
 			clientConnect = new ServerSocket(port);
@@ -92,10 +89,11 @@ public class MasterHandler extends Thread {
         dos.flush();
 	}
 	
+	@Deprecated
 	private void receiveServerSocket(DataInputStream dis) throws IOException {
 		String serverSocketIP = dis.readUTF();
         int serverSocketPort = dis.readInt();
-        serverSocket = new SocketInformation(serverSocketIP, serverSocketPort);
+//        serverSocket = new SocketInformation(serverSocketIP, serverSocketPort);
         System.out.println(serverSocketIP + ":" + serverSocketPort);
 	}
 	
@@ -141,7 +139,6 @@ public class MasterHandler extends Thread {
         	hasHigherX = true;
         }
         block = controller.createBlock(dimension, hasLowerX, hasHigherX);
-//        controller.createBlock(dimension, hasLowerX, hasHigherX);
         
         System.out.println(startX + " " + endX + " " +  maxY + " " + maxZ);
 	}

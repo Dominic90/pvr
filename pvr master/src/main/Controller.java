@@ -38,13 +38,6 @@ public class Controller extends Thread {
 		} catch (BrokenBarrierException e) {
 			e.printStackTrace();
 		}
-//		for (Node node : Main.nodes) {
-//			node.start();
-//		}
-//		
-//		for (Node node : Main.nodes) {
-//			node.receiveData();
-//		}
 	}
 	
 	private void receiveData() {

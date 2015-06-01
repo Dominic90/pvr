@@ -64,9 +64,6 @@ public class Main extends Application {
         primaryStage.setTitle("Heatmap!");
         StackPane root = new StackPane();
         MainPane pane = new MainPane();
-//        for (Node node : nodes) {
-//        	node.getReceiver().setPane(pane);
-//        }
         pane.setLayoutX(0);
         pane.setLayoutY(0);
         pane.setPrefWidth(800);
