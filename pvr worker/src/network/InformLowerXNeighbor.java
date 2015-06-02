@@ -18,56 +18,81 @@ public class InformLowerXNeighbor extends Thread {
 	protected int port;
 	protected CyclicBarrier barrier;
 	
-	public InformLowerXNeighbor(Block block, int port, CyclicBarrier barrier) {
-		this.block = block;
+	private ServerSocket clientConnect;
+	private Socket client;
+	private DataInputStream dis;
+	private DataOutputStream dos;
+	
+	public InformLowerXNeighbor(int port, CyclicBarrier barrier) {
 		this.port = port;
 		this.barrier = barrier;
+		System.out.println("ServerSocketPort: " + port);
+		try {
+			clientConnect = new ServerSocket(port);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void setBlock(Block block) {
+		this.block = block;
 	}
 	
 	@Override
 	public void run() {
-		while (true) {
-			ServerSocket clientConnect = null;
-			Socket client = null;
-			DataInputStream dis = null;
-			DataOutputStream dos = null;
+		setName("Lower Client handler Thread");
+		try {
+			System.out.println("lower client started");
+			establishConnection();
+			System.out.println("connection established");
+			update();
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (BrokenBarrierException e) {
+			e.printStackTrace();
+		}
+		finally {
 			try {
-				clientConnect = new ServerSocket(port);
-				client = clientConnect.accept(); // blocks
-		        dis = new DataInputStream(
-		                new BufferedInputStream(client.getInputStream()));
-		        barrier.await();
-		        
-		        block.receiveFromNeighbor(0, dis);
-		        block.sendToNeighbor(0, dos);
-				
-		        barrier.await();
-			}
-			catch ( IOException e ) {
-		        e.printStackTrace();
-		    } catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (BrokenBarrierException e) {
-				e.printStackTrace();
-			}
-			finally {
-				try {
-					if (dis != null) {
-						dis.close();
-					}
-					if (dos != null) {
-						dos.close();
-					}
-					if (client != null) {
-						client.close();
-					}
-					if (clientConnect != null) {
-						clientConnect.close();
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
+				if (dis != null) {
+					dis.close();
 				}
+				if (dos != null) {
+					dos.close();
+				}
+				if (client != null) {
+					client.close();
+				}
+				if (clientConnect != null) {
+					clientConnect.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
+		}
+
+
+
+	}
+	
+	private void establishConnection() throws IOException {
+		client = clientConnect.accept();
+		dis = new DataInputStream(new BufferedInputStream(client.getInputStream()));
+		dos = new DataOutputStream(new BufferedOutputStream(client.getOutputStream()));
+	}
+	
+	private void update() throws IOException, InterruptedException, BrokenBarrierException {
+		while (true) {
+			System.out.println("Lower before barrier");
+	        barrier.await();
+	        
+	        System.out.println("start update lower");
+	        block.receiveFromNeighbor(0, dis);
+	        block.sendToNeighbor(1, dos);
+			
+	        barrier.await();
 		}
 	}
 }

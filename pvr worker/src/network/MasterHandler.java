@@ -18,6 +18,8 @@ public class MasterHandler extends Thread {
 	private Thread controllerThread;
 	private Controller controller;
 	private CyclicBarrier barrier;
+	private InformLowerXNeighbor informLower;
+	private InformHigherXNeighbor informHigher;
 	
 	private ServerSocket clientConnect;
 	private Socket client;
@@ -28,11 +30,15 @@ public class MasterHandler extends Thread {
 	private SocketInformation higherXSocket;
 	private Block block;
 	
-	public MasterHandler(Thread controllerThread, Controller controller, int port, CyclicBarrier barrier) {
+	public MasterHandler(Thread controllerThread, Controller controller, int port, CyclicBarrier barrier, 
+			InformLowerXNeighbor informLower, InformHigherXNeighbor informHigher) {
 		this.controllerThread = controllerThread;
 		this.controller = controller;
 		this.barrier = barrier;
+		this.informLower = informLower;
+		this.informHigher = informHigher;
 		try {
+			System.out.println(port);
 			clientConnect = new ServerSocket(port);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -84,6 +90,11 @@ public class MasterHandler extends Thread {
         receiveHigherXSocket(dis);
         receiveNodeDimension(dis);
         
+        if (lowerXSocket != null) {
+        	informLower.setBlock(block);
+        	informLower.start();        	
+        }
+        
         dos = new DataOutputStream(new BufferedOutputStream(client.getOutputStream()));
         dos.writeUTF("ready init");
         dos.flush();
@@ -114,6 +125,7 @@ public class MasterHandler extends Thread {
         int higherXSocketPort = dis.readInt();
         if ( ! higherXSocketIp.equals("null")) {
         	higherXSocket = new SocketInformation(higherXSocketIp, higherXSocketPort);
+        	informHigher.setHigherNeighborSocket(higherXSocket);
         }
         else {
         	higherXSocket = null;
@@ -147,6 +159,11 @@ public class MasterHandler extends Thread {
 		String command = dis.readUTF();
         System.out.println(command);
         
+        if (higherXSocket != null) {
+        	informHigher.setBlock(block);
+        	informHigher.start();        	
+        }
+        
         synchronized (controllerThread) {
         	controllerThread.notify();			
 		}
@@ -154,7 +171,9 @@ public class MasterHandler extends Thread {
 	
 	private void updateMaster() throws InterruptedException, BrokenBarrierException, IOException {
 		while(true) {
+			System.out.println("master before barrier");
 			barrier.await();
+			System.out.println("Start update master");
 			block.sendToMaster(dos);
 			String answer = dis.readUTF();
 			if (answer.equals("proceed")) {

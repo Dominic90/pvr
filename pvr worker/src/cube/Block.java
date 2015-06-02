@@ -136,7 +136,7 @@ public class Block {
 	
 	public void sendToNeighbor(int x, DataOutputStream dos) throws IOException {
 		for (int y = 0; y < block[x].length; y++) {
-			for (int z = 0; z < block[y].length; z++) {
+			for (int z = 0; z < block[x][y].length; z++) {
 				dos.writeFloat(block[x][y][z].getCurrentTemp());
 			}
 			dos.flush();
@@ -145,7 +145,7 @@ public class Block {
 	
 	public void receiveFromNeighbor(int x, DataInputStream dis) throws IOException {
 		for (int y = 0; y < block[x].length; y++) {
-			for (int z = 0; z < block[y].length; z++) {
+			for (int z = 0; z < block[x][y].length; z++) {
 				block[x][y][z].setNewTemp(dis.readFloat());
 				block[x][y][z].updateTemp();
 			}

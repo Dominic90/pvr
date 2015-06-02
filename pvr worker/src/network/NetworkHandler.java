@@ -12,29 +12,31 @@ public class NetworkHandler {
 	private Controller controller;
 	private Block block;
 	
-	private SocketInformation serverSocket;
-	private SocketInformation lowerXSocket;
-	private SocketInformation higherXSocket;
-	
 	private CyclicBarrier barrier;
 	private MasterHandler masterHandler;
 	private InformLowerXNeighbor informLower;
+	private InformHigherXNeighbor informHigher;
 	
 	public NetworkHandler(int port, Controller controller) {
 		this.port = port;
 		this.controller = controller;
-		barrier = new CyclicBarrier(2);
+		barrier = new CyclicBarrier(3);
 	}
 	
 	public void waitForInitInformation(Thread controllerThread) {
-		masterHandler = new MasterHandler(controllerThread, controller, port, barrier);
+		informLower = new InformLowerXNeighbor(port + 1, barrier);
+		informHigher = new InformHigherXNeighbor(barrier);
+		masterHandler = new MasterHandler(controllerThread, controller, port, barrier, informLower, informHigher);
 		masterHandler.start();
 	}
 	
 	public void endIteration() {
 		try {
+			System.out.println("End Iteration 1");
 			barrier.await();
+			System.out.println("End Iteration 2");
 			barrier.await();
+			System.out.println("End Iteration 3");
 		} catch (InterruptedException | BrokenBarrierException e) {
 			e.printStackTrace();
 		}
