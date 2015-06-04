@@ -137,7 +137,8 @@ public class NodeNetwork extends Thread {
 	private void receiveData() throws IOException, InterruptedException, BrokenBarrierException {
 		int sizeX = dimension.getEndX() - dimension.getStartX() + 1; //TODO +1
 		int sizeY = dimension.getMaxY();
-		double[][] nodeArea = new double[sizeX][sizeY];
+		System.out.println("Thread: " + nodeSocket.getPort() + " sizeX: " + sizeX + " sizeY: " + sizeY);
+		double[][] nodeArea = new double[sizeX][sizeY]; // TODO: optimize
 		counter = 0;
 		while (true) {
 			System.out.println("Node: " + dimension.getStartX() + " " + counter);

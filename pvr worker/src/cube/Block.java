@@ -36,16 +36,20 @@ public class Block {
 	
 	public Block(NodeDimension dimension, boolean hasLowerX, boolean hasHigherX) {
 		this.dimension = dimension;
-		middleY = dimension.getMaxY() / 2;
-		int xSize = dimension.getEndX() - dimension.getStartX() + 2; // TODO oversize depending on higher and lower x
-		System.out.println("Size of X: " + xSize);
-		block = new ICube[xSize][dimension.getMaxY()][dimension.getMaxZ()];
+		int xSize = dimension.getEndX() - dimension.getStartX() + 1;
 		if (hasLowerX) {
+			xSize++;
 			skipStartX = 1;
 		}
 		if (hasHigherX) {
+			xSize++;
 			skipEndX = 1;
 		}
+		middleY = dimension.getMaxY() / 2;
+//		int xSize = dimension.getEndX() - dimension.getStartX() + 2; // TODO oversize depending on higher and lower x
+		System.out.println("Size of X: " + xSize);
+		block = new ICube[xSize][dimension.getMaxY()][dimension.getMaxZ()];
+		
 		createBlock();
 		setBorderHeat();
 	}
@@ -126,6 +130,7 @@ public class Block {
 	}
 	
 	public void sendToMaster(DataOutputStream dos) throws IOException {
+		System.out.println("SendToMaster: " + skipStartX + " " + (block.length - skipEndX));
 		for (int x = skipStartX; x < block.length - skipEndX; x ++) {
 			for (int z = 0; z < block[x][middleY].length; z++) {
 				dos.writeFloat(block[x][middleY][z].getCurrentTemp());

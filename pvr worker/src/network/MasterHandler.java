@@ -15,6 +15,7 @@ import cube.Block;
 
 public class MasterHandler extends Thread {
 
+	private NetworkHandler networkHandler;
 	private Thread controllerThread;
 	private Controller controller;
 	private CyclicBarrier barrier;
@@ -30,11 +31,11 @@ public class MasterHandler extends Thread {
 	private SocketInformation higherXSocket;
 	private Block block;
 	
-	public MasterHandler(Thread controllerThread, Controller controller, int port, CyclicBarrier barrier, 
+	public MasterHandler(NetworkHandler networkHandler, Thread controllerThread, Controller controller, int port, 
 			InformLowerXNeighbor informLower, InformHigherXNeighbor informHigher) {
+		this.networkHandler = networkHandler;
 		this.controllerThread = controllerThread;
 		this.controller = controller;
-		this.barrier = barrier;
 		this.informLower = informLower;
 		this.informHigher = informHigher;
 		try {
@@ -90,8 +91,18 @@ public class MasterHandler extends Thread {
         receiveHigherXSocket(dis);
         receiveNodeDimension(dis);
         
+        int barrierCount = 2;
+        if (higherXSocket != null) {
+        	barrierCount++;
+        }
+        if (lowerXSocket != null) {
+        	barrierCount++;
+        }
+        barrier = new CyclicBarrier(barrierCount);
+        networkHandler.setBarrier(barrier);
         if (lowerXSocket != null) {
         	informLower.setBlock(block);
+        	informLower.setBarrier(barrier);
         	informLower.start();        	
         }
         
@@ -161,6 +172,7 @@ public class MasterHandler extends Thread {
         
         if (higherXSocket != null) {
         	informHigher.setBlock(block);
+        	informHigher.setBarrier(barrier);
         	informHigher.start();        	
         }
         

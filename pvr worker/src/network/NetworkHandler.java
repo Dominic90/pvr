@@ -12,21 +12,21 @@ public class NetworkHandler {
 	private Controller controller;
 	private Block block;
 	
-	private CyclicBarrier barrier;
 	private MasterHandler masterHandler;
 	private InformLowerXNeighbor informLower;
 	private InformHigherXNeighbor informHigher;
 	
+	private CyclicBarrier barrier;
+	
 	public NetworkHandler(int port, Controller controller) {
 		this.port = port;
 		this.controller = controller;
-		barrier = new CyclicBarrier(3);
 	}
 	
 	public void waitForInitInformation(Thread controllerThread) {
-		informLower = new InformLowerXNeighbor(port + 1, barrier);
-		informHigher = new InformHigherXNeighbor(barrier);
-		masterHandler = new MasterHandler(controllerThread, controller, port, barrier, informLower, informHigher);
+		informLower = new InformLowerXNeighbor(port + 1);
+		informHigher = new InformHigherXNeighbor();
+		masterHandler = new MasterHandler(this, controllerThread, controller, port, informLower, informHigher);
 		masterHandler.start();
 	}
 	
@@ -44,5 +44,9 @@ public class NetworkHandler {
 	
 	public void setBlock(Block block) {
 		this.block = block;
+	}
+	
+	public void setBarrier(CyclicBarrier barrier) {
+		this.barrier = barrier;
 	}
 }

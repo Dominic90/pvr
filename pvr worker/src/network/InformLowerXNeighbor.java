@@ -23,9 +23,8 @@ public class InformLowerXNeighbor extends Thread {
 	private DataInputStream dis;
 	private DataOutputStream dos;
 	
-	public InformLowerXNeighbor(int port, CyclicBarrier barrier) {
+	public InformLowerXNeighbor(int port) {
 		this.port = port;
-		this.barrier = barrier;
 		System.out.println("ServerSocketPort: " + port);
 		try {
 			clientConnect = new ServerSocket(port);
@@ -36,6 +35,10 @@ public class InformLowerXNeighbor extends Thread {
 	
 	public void setBlock(Block block) {
 		this.block = block;
+	}
+	
+	public void setBarrier(CyclicBarrier barrier) {
+		this.barrier = barrier;
 	}
 	
 	@Override

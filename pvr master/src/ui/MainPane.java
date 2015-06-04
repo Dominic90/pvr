@@ -11,6 +11,10 @@ import main.Main;
 public class MainPane extends ScrollPane {
 
 	private static final double elementSize = 3;
+	private static final int MIN_TEMP = 0;
+	private static final int MAX_TEMP = 100;
+	private final static double BLUE_HUE = Color.BLUE.getHue() ;
+    private final static double RED_HUE = Color.RED.getHue() ;
 	
 	private Pane inner;
 	
@@ -49,28 +53,14 @@ public class MainPane extends ScrollPane {
 	}
 	
 	public void update(int x, int y, float temp) {
-		float ratio = 2 * (temp - 0) / (100 - 0);
-		int b = Math.max(0, (int)(255*(1-ratio)));
-		int r = Math.max(0, (int)(255*(ratio-1)));
-		int g = 255 - b - r;
-		String blue = Integer.toHexString(b);
-		String red = Integer.toHexString(r);
-		String green = Integer.toHexString(g);
-		if (blue.length() < 2) {
-			blue = "0" + blue;
+		Color color = null;
+		if (temp < MIN_TEMP || temp > MAX_TEMP) {
+			 color = Color.BLACK ;
 		}
-		if (red.length() < 2) {
-			red = "0" + red;
+		else {
+			double hue = BLUE_HUE + (RED_HUE - BLUE_HUE) * (temp - MIN_TEMP) / (MAX_TEMP - MIN_TEMP) ;
+			color =  Color.hsb(hue, 1.0, 1.0);			
 		}
-		if (green.length() < 2) {
-			green = "0" + green;
-		}
-		try {
-			headmap[x][y].setFill(Color.web(red + green + blue));
-		}
-		catch (Exception e) {
-			headmap[x][y].setFill(Color.web(red.substring(red.length() - 2) + green.substring(green.length() - 2) + blue.substring(blue.length() - 2)));
-			System.out.println("ERROR: " + red + " " + green + " " + blue);
-		}
+		headmap[x][y].setFill(color);
 	}
 }

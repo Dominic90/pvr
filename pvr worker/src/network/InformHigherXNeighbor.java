@@ -22,8 +22,8 @@ public class InformHigherXNeighbor extends Thread {
 	private DataOutputStream dos;
 	private DataInputStream dis;
 	
-	public InformHigherXNeighbor(CyclicBarrier barrier) {
-		this.barrier = barrier;
+	public InformHigherXNeighbor() {
+		
 	}
 	
 	public void setHigherNeighborSocket(SocketInformation higherNeighborSocket) {
@@ -32,6 +32,10 @@ public class InformHigherXNeighbor extends Thread {
 	
 	public void setBlock(Block block) {
 		this.block = block;
+	}
+	
+	public void setBarrier(CyclicBarrier barrier) {
+		this.barrier = barrier;
 	}
 	
 	@Override
