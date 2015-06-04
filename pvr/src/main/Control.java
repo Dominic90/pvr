@@ -16,7 +16,6 @@ public class Control extends Thread {
 	
 	@Override
 	public void run() {
-		Thread t = new Thread();
 		block = new Block(headmap);
 		for (int i = 0; i < Main.iterations; i++) {
 			block.calculate(0, 0, 0, Main.x, Main.y, Main.z);

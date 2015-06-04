@@ -11,7 +11,7 @@ import java.util.concurrent.CyclicBarrier;
 
 import cube.Block;
 
-public class InformHigherXNeighbor extends Thread {
+public class HigherNeighborConnection extends Thread {
 
 	protected Block block;
 	protected SocketInformation higherNeighborSocket;
@@ -22,19 +22,9 @@ public class InformHigherXNeighbor extends Thread {
 	private DataOutputStream dos;
 	private DataInputStream dis;
 	
-	public InformHigherXNeighbor() {
-		
-	}
-	
-	public void setHigherNeighborSocket(SocketInformation higherNeighborSocket) {
+	public HigherNeighborConnection(SocketInformation higherNeighborSocket, Block block, CyclicBarrier barrier) {
 		this.higherNeighborSocket = higherNeighborSocket;
-	}
-	
-	public void setBlock(Block block) {
 		this.block = block;
-	}
-	
-	public void setBarrier(CyclicBarrier barrier) {
 		this.barrier = barrier;
 	}
 	
@@ -54,19 +44,7 @@ public class InformHigherXNeighbor extends Thread {
             e.printStackTrace();
         }
 		finally {
-			try {
-				if (dos != null) {
-					dos.close();
-				}
-				if (dis != null) {
-					dis.close();
-				}
-				if (socket != null) {
-					socket.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			closeResources();
 		}
 	}
 	
@@ -82,12 +60,21 @@ public class InformHigherXNeighbor extends Thread {
 	        barrier.await();
 		}
 	}
-
-//	@Override
-//	protected void sendAndReceive(DataOutputStream dos, DataInputStream dis)
-//			throws Exception {
-//		block.sendToNeighbor(block.getBlockXSize(), dos);
-//		block.receiveFromNeighbor(block.getBlockXSize(), dis);
-//	}
+	
+	private void closeResources() {
+		try {
+			if (dos != null) {
+				dos.close();
+			}
+			if (dis != null) {
+				dis.close();
+			}
+			if (socket != null) {
+				socket.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 }

@@ -28,11 +28,7 @@ public class Controller extends Thread {
 			node.initalizeNode(pane);
 		}
 		try {
-			System.out.println("in cont");
 			barrier.await();
-			while (true) {
-				barrier.await();
-			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (BrokenBarrierException e) {
@@ -41,6 +37,14 @@ public class Controller extends Thread {
 	}
 	
 	private void receiveData() {
-		
+		try {
+			while (true) {
+				barrier.await();				
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (BrokenBarrierException e) {
+			e.printStackTrace();
+		}
 	}
 }

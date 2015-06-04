@@ -53,8 +53,7 @@ public class Main extends Application {
 			if (i < sockets.size() - 1 && sockets.size() > 1) {
 				higher = sockets.get(i + 1);
 			}
-			Node node = new Node(sockets.get(i), new SocketInformation("localhost", 7000 + i), 
-					lower, higher, new NodeDimension(startX, endX, x, y, z), barrier);
+			Node node = new Node(sockets.get(i), lower, higher, new NodeDimension(startX, endX, x, y, z), barrier);
 			nodes.add(node);
 		}
 	}

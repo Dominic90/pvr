@@ -7,7 +7,6 @@ import network.NodeDimension;
 public class Controller extends Thread {
 
 	private NetworkHandler networkHandler;
-	private NodeDimension dimension;
 	private Block block;
 	
 	public Controller(int port) {
@@ -16,31 +15,28 @@ public class Controller extends Thread {
 	
 	@Override
 	public void run() {
+		init();
+		doCalculation();
+	}
+	
+	private void init() {
 		setName("Controller Thread");
-		System.out.println(1);
 		networkHandler.waitForInitInformation(Thread.currentThread());
-		synchronized (Thread.currentThread()) {
-			try {
-				Thread.currentThread().wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		block.test();
-		System.out.println(2);
+		networkHandler.waitForStart();
 		networkHandler.setBlock(block);
-//		
+	}
+	
+	private void doCalculation() {
 		while (true) {
 			block.calculate();
 			block.updateValues();
-			
 			networkHandler.endIteration();
 		}
 	}
 	
 	public Block createBlock(NodeDimension dimension, boolean hasLowerX, boolean hasHigherX) {
-		this.dimension = dimension;
 		block = new Block(dimension, hasLowerX, hasHigherX);
+		networkHandler.setBlock(block);
 		System.out.println("End create of block");
 		return block;
 	}

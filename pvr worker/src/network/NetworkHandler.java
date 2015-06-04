@@ -12,9 +12,9 @@ public class NetworkHandler {
 	private Controller controller;
 	private Block block;
 	
-	private MasterHandler masterHandler;
-	private InformLowerXNeighbor informLower;
-	private InformHigherXNeighbor informHigher;
+	private MasterConnection masterHandler;
+	private LowerNeighborConnection informLower;
+	private HigherNeighborConnection informHigher;
 	
 	private CyclicBarrier barrier;
 	
@@ -24,19 +24,38 @@ public class NetworkHandler {
 	}
 	
 	public void waitForInitInformation(Thread controllerThread) {
-		informLower = new InformLowerXNeighbor(port + 1);
-		informHigher = new InformHigherXNeighbor();
-		masterHandler = new MasterHandler(this, controllerThread, controller, port, informLower, informHigher);
+		masterHandler = new MasterConnection(this, controllerThread, controller, port);
 		masterHandler.start();
+	}
+	
+	public void waitForStart() {
+		synchronized (Thread.currentThread()) {
+			try {
+				Thread.currentThread().wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void startInformLower(SocketInformation lowerXSocket) {
+		if (lowerXSocket != null) {
+			informLower = new LowerNeighborConnection(port + 1, block, barrier);
+        	informLower.start();
+        }
+	}
+	
+	public void startInformHigher(SocketInformation higherXSocket) {
+		if (higherXSocket != null) {
+			informHigher = new HigherNeighborConnection(higherXSocket, block, barrier);
+        	informHigher.start();        	
+        }
 	}
 	
 	public void endIteration() {
 		try {
-			System.out.println("End Iteration 1");
 			barrier.await();
-			System.out.println("End Iteration 2");
 			barrier.await();
-			System.out.println("End Iteration 3");
 		} catch (InterruptedException | BrokenBarrierException e) {
 			e.printStackTrace();
 		}

@@ -15,12 +15,11 @@ import ui.MainPane;
 public class NodeNetwork extends Thread {
 
 	private SocketInformation nodeSocket;
-	private SocketInformation serverSocket;
 	private SocketInformation lowerXSocket;
 	private SocketInformation higherXSocket;
 	private NodeDimension dimension;
 	private CyclicBarrier barrier;
-	private MainPane pane;
+	private MainPane pane; // may put in controller and update from there
 	
 	private Socket sender;
 	private DataOutputStream dos;
@@ -28,10 +27,9 @@ public class NodeNetwork extends Thread {
 	
 	private int counter;
 	
-	public NodeNetwork(SocketInformation nodeSocket, SocketInformation serverSocket, SocketInformation lowerXSocket, 
-			SocketInformation higherXSocket, NodeDimension dimension, CyclicBarrier barrier, MainPane pane) {
+	public NodeNetwork(SocketInformation nodeSocket, SocketInformation lowerXSocket, SocketInformation higherXSocket, 
+			NodeDimension dimension, CyclicBarrier barrier, MainPane pane) {
 		this.nodeSocket = nodeSocket;
-		this.serverSocket = serverSocket;
 		this.lowerXSocket = lowerXSocket;
 		this.higherXSocket = higherXSocket;
 		this.dimension = dimension;
@@ -42,16 +40,7 @@ public class NodeNetwork extends Thread {
 	@Override
 	public void run() {
 		try {
-			sender = new Socket(nodeSocket.getIp(), nodeSocket.getPort());
-			if ( sender != null && sender.isConnected() ) {
-				sendInitData();
-				System.out.println("init finished");
-				barrier.await();
-				System.out.println("send start");
-				setStart();
-				System.out.println("started");
-				receiveData();
-            }
+			sendData();
         } catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (BrokenBarrierException e) {
@@ -61,28 +50,22 @@ public class NodeNetwork extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        
 		finally {
-			try {
-				if (dos != null) {
-					dos.close();
-				}
-				if (dis != null) {
-					dis.close();
-				}
-				if (sender != null) {
-					sender.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			closeResources();
 		}
 	}
 	
-	private void sendServerSocket(DataOutputStream dos) throws IOException {
-		dos.writeUTF(serverSocket.getIp());
-		dos.writeInt(serverSocket.getPort());
-		dos.flush();
+	private void sendData() throws UnknownHostException, IOException, InterruptedException, BrokenBarrierException {
+		sender = new Socket(nodeSocket.getIp(), nodeSocket.getPort());
+		if (sender != null && sender.isConnected()) {
+			sendInitData();
+			System.out.println("init finished");
+			barrier.await();
+			System.out.println("send start");
+			sendStart();
+			System.out.println("started");
+			receiveData();
+        }
 	}
 	
 	private void sendLowerXSocket(DataOutputStream dos) throws IOException {
@@ -120,7 +103,6 @@ public class NodeNetwork extends Thread {
 	
 	private void sendInitData() throws IOException {
 		dos = new DataOutputStream(new BufferedOutputStream(sender.getOutputStream()));
-		sendServerSocket(dos);
 		sendLowerXSocket(dos);
 		sendHigherXSocket(dos);
 		sendNodeDimensions(dos);
@@ -129,30 +111,40 @@ public class NodeNetwork extends Thread {
 		System.out.println(dis.readUTF());
 	}
 	
-	private void setStart() throws IOException {
+	private void sendStart() throws IOException {
 		dos.writeUTF("start");
 		dos.flush();
 	}
 	
 	private void receiveData() throws IOException, InterruptedException, BrokenBarrierException {
-		int sizeX = dimension.getEndX() - dimension.getStartX() + 1; //TODO +1
+		int sizeX = dimension.getEndX() - dimension.getStartX() + 1; // TODO calculate for 1 worker
 		int sizeY = dimension.getMaxY();
 		System.out.println("Thread: " + nodeSocket.getPort() + " sizeX: " + sizeX + " sizeY: " + sizeY);
-		double[][] nodeArea = new double[sizeX][sizeY]; // TODO: optimize
+		double[][] nodeArea = new double[sizeX][sizeY];
 		counter = 0;
 		while (true) {
 			System.out.println("Node: " + dimension.getStartX() + " " + counter);
 			counter++;
-			for (int x = 0; x < sizeX; x++) {
-				for (int y = 0; y < sizeY; y++) {
-					double d = dis.readFloat();
-					nodeArea[x][y] = d;
-				}
-			}
-			pane.update(nodeArea, dimension.getStartX());
+			pane.update(dis, nodeArea, sizeX, sizeY, dimension.getStartX());
 			barrier.await();
 			dos.writeUTF("proceed");
 	        dos.flush();
+		}
+	}
+	
+	private void closeResources() {
+		try {
+			if (dos != null) {
+				dos.close();
+			}
+			if (dis != null) {
+				dis.close();
+			}
+			if (sender != null) {
+				sender.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

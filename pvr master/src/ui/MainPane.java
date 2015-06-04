@@ -1,5 +1,8 @@
 package ui;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+
 import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
@@ -22,11 +25,12 @@ public class MainPane extends ScrollPane {
 	
 	public MainPane() {
 		inner = new Pane();
-		inner.setLayoutX(0);
-		inner.setLayoutY(0);
-		inner.setPrefWidth(Main.x * elementSize);
-		inner.setPrefHeight(Main.y * elementSize);
+		inner.setPrefSize(Main.x * elementSize, Main.y * elementSize);
 		setContent(inner);
+		initHeatmap();
+	}
+	
+	private void initHeatmap() {
 		headmap = new Rectangle[Main.x][Main.y];
 		for (int x = 0; x < headmap.length; x++) {
 			for (int y = 0; y < headmap[x].length; y ++) {
@@ -37,7 +41,17 @@ public class MainPane extends ScrollPane {
 		}
 	}
 	
-	public void update(final double[][] nodeArea, int startX) {
+	public void update(DataInputStream dis, final double[][] nodeArea, int sizeX, int sizeY, int startX) throws IOException {
+		for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY; y++) {
+				double d = dis.readFloat();
+				nodeArea[x][y] = d;
+			}
+		}
+		update(nodeArea, startX);
+	}
+	
+	private void update(final double[][] nodeArea, int startX) {
 		Platform.runLater(new Runnable() {
 			
 			@Override

@@ -13,14 +13,12 @@ import java.util.concurrent.CyclicBarrier;
 import main.Controller;
 import cube.Block;
 
-public class MasterHandler extends Thread {
+public class MasterConnection extends Thread {
 
 	private NetworkHandler networkHandler;
 	private Thread controllerThread;
 	private Controller controller;
 	private CyclicBarrier barrier;
-	private InformLowerXNeighbor informLower;
-	private InformHigherXNeighbor informHigher;
 	
 	private ServerSocket clientConnect;
 	private Socket client;
@@ -31,13 +29,10 @@ public class MasterHandler extends Thread {
 	private SocketInformation higherXSocket;
 	private Block block;
 	
-	public MasterHandler(NetworkHandler networkHandler, Thread controllerThread, Controller controller, int port, 
-			InformLowerXNeighbor informLower, InformHigherXNeighbor informHigher) {
+	public MasterConnection(NetworkHandler networkHandler, Thread controllerThread, Controller controller, int port) {
 		this.networkHandler = networkHandler;
 		this.controllerThread = controllerThread;
 		this.controller = controller;
-		this.informLower = informLower;
-		this.informHigher = informHigher;
 		try {
 			System.out.println(port);
 			clientConnect = new ServerSocket(port);
@@ -63,30 +58,13 @@ public class MasterHandler extends Thread {
 			e.printStackTrace();
 		}
 		finally {
-			try {
-				if (dis != null) {
-					dis.close();
-				}
-				if (dos != null) {
-					dos.close();
-				}
-				if (client != null) {
-					client.close();
-				}
-				if (clientConnect != null) {
-					clientConnect.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			closeResources();
 		}
-		
 	}
 	
 	private void receiveDataFromMaster() throws IOException {
 		client = clientConnect.accept();
 		dis = new DataInputStream(new BufferedInputStream(client.getInputStream()));
-        receiveServerSocket(dis);
         receiveLowerXSocket(dis);
         receiveHigherXSocket(dis);
         receiveNodeDimension(dis);
@@ -100,23 +78,11 @@ public class MasterHandler extends Thread {
         }
         barrier = new CyclicBarrier(barrierCount);
         networkHandler.setBarrier(barrier);
-        if (lowerXSocket != null) {
-        	informLower.setBlock(block);
-        	informLower.setBarrier(barrier);
-        	informLower.start();        	
-        }
+    	networkHandler.startInformLower(lowerXSocket);
         
         dos = new DataOutputStream(new BufferedOutputStream(client.getOutputStream()));
         dos.writeUTF("ready init");
         dos.flush();
-	}
-	
-	@Deprecated
-	private void receiveServerSocket(DataInputStream dis) throws IOException {
-		String serverSocketIP = dis.readUTF();
-        int serverSocketPort = dis.readInt();
-//        serverSocket = new SocketInformation(serverSocketIP, serverSocketPort);
-        System.out.println(serverSocketIP + ":" + serverSocketPort);
 	}
 	
 	private void receiveLowerXSocket(DataInputStream dis) throws IOException {
@@ -136,7 +102,6 @@ public class MasterHandler extends Thread {
         int higherXSocketPort = dis.readInt();
         if ( ! higherXSocketIp.equals("null")) {
         	higherXSocket = new SocketInformation(higherXSocketIp, higherXSocketPort);
-        	informHigher.setHigherNeighborSocket(higherXSocket);
         }
         else {
         	higherXSocket = null;
@@ -169,13 +134,7 @@ public class MasterHandler extends Thread {
 	private void waitForStart() throws IOException {
 		String command = dis.readUTF();
         System.out.println(command);
-        
-        if (higherXSocket != null) {
-        	informHigher.setBlock(block);
-        	informHigher.setBarrier(barrier);
-        	informHigher.start();        	
-        }
-        
+        networkHandler.startInformHigher(higherXSocket);
         synchronized (controllerThread) {
         	controllerThread.notify();			
 		}
@@ -195,6 +154,25 @@ public class MasterHandler extends Thread {
 				// TODO: stop simulation
 			}
 			barrier.await();
+		}
+	}
+	
+	private void closeResources() {
+		try {
+			if (dis != null) {
+				dis.close();
+			}
+			if (dos != null) {
+				dos.close();
+			}
+			if (client != null) {
+				client.close();
+			}
+			if (clientConnect != null) {
+				clientConnect.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

@@ -12,7 +12,7 @@ import java.util.concurrent.CyclicBarrier;
 
 import cube.Block;
 
-public class InformLowerXNeighbor extends Thread {
+public class LowerNeighborConnection extends Thread {
 
 	protected Block block;
 	protected int port;
@@ -23,22 +23,16 @@ public class InformLowerXNeighbor extends Thread {
 	private DataInputStream dis;
 	private DataOutputStream dos;
 	
-	public InformLowerXNeighbor(int port) {
+	public LowerNeighborConnection(int port, Block block, CyclicBarrier barrier) {
 		this.port = port;
+		this.block = block;
+		this.barrier = barrier;
 		System.out.println("ServerSocketPort: " + port);
 		try {
 			clientConnect = new ServerSocket(port);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public void setBlock(Block block) {
-		this.block = block;
-	}
-	
-	public void setBarrier(CyclicBarrier barrier) {
-		this.barrier = barrier;
 	}
 	
 	@Override
@@ -75,9 +69,6 @@ public class InformLowerXNeighbor extends Thread {
 				e.printStackTrace();
 			}
 		}
-
-
-
 	}
 	
 	private void establishConnection() throws IOException {

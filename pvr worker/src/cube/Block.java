@@ -46,7 +46,6 @@ public class Block {
 			skipEndX = 1;
 		}
 		middleY = dimension.getMaxY() / 2;
-//		int xSize = dimension.getEndX() - dimension.getStartX() + 2; // TODO oversize depending on higher and lower x
 		System.out.println("Size of X: " + xSize);
 		block = new ICube[xSize][dimension.getMaxY()][dimension.getMaxZ()];
 		
@@ -62,9 +61,6 @@ public class Block {
 							(x == block.length - 1 && dimension.getEndX() == dimension.getMaxX() - 1) || 
 							y == block[x].length - 1 || z == block[x][y].length - 1) {
 						block[x][y][z] = new BorderCube();
-//						if ((x == block.length - 1 && dimension.getEndX() - dimension.getStartX() == block.length - 1)) {
-//							System.out.println("Border!!!");
-//						}
 					}
 					else {
 						block[x][y][z] = new NormalCube();						
@@ -159,9 +155,5 @@ public class Block {
 	
 	public int getBlockXSize() {
 		return block.length - 1;
-	}
-	
-	public void test() {
-		System.out.println("Lenght: " + block.length);
 	}
 }
