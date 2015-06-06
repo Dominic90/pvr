@@ -9,6 +9,8 @@ public class Controller extends Thread {
 	private NetworkHandler networkHandler;
 	private Block block;
 	
+	public volatile static boolean run = true;
+	
 	public Controller(int port) {
 		this.networkHandler = new NetworkHandler(port, this);
 	}
@@ -27,11 +29,13 @@ public class Controller extends Thread {
 	}
 	
 	private void doCalculation() {
-		while (true) {
+		while (run) {
 			block.calculate();
 			block.updateValues();
 			networkHandler.endIteration();
 		}
+		
+		System.out.println("Calculation finished");
 	}
 	
 	public Block createBlock(NodeDimension dimension, boolean hasLowerX, boolean hasHigherX) {

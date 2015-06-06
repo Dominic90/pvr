@@ -141,7 +141,7 @@ public class MasterConnection extends Thread {
 	}
 	
 	private void updateMaster() throws InterruptedException, BrokenBarrierException, IOException {
-		while(true) {
+		while(Controller.run) {
 			System.out.println("master before barrier");
 			barrier.await();
 			System.out.println("Start update master");
@@ -151,7 +151,8 @@ public class MasterConnection extends Thread {
 				System.out.println(answer);					
 			}
 			else {
-				// TODO: stop simulation
+				System.out.println("Stop: " + answer);
+				Controller.run = false;
 			}
 			barrier.await();
 		}

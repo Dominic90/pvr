@@ -34,6 +34,7 @@ public class Main extends Application {
 		y = 100;
 		z = 100;
 		type = EType.BORDER;
+		iterations = 100;
 		List<SocketInformation> sockets = new ArrayList<SocketInformation>();
 		sockets.add(new SocketInformation("localhost", 8000));
 		sockets.add(new SocketInformation("localhost", 8010));

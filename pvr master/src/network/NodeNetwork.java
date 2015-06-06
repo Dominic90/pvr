@@ -10,6 +10,8 @@ import java.net.UnknownHostException;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
+import main.Controller;
+import main.Main;
 import ui.MainPane;
 
 public class NodeNetwork extends Thread {
@@ -122,12 +124,18 @@ public class NodeNetwork extends Thread {
 		System.out.println("Thread: " + nodeSocket.getPort() + " sizeX: " + sizeX + " sizeY: " + sizeY);
 		double[][] nodeArea = new double[sizeX][sizeY];
 		counter = 0;
-		while (true) {
+		while (Controller.run) {
 			System.out.println("Node: " + dimension.getStartX() + " " + counter);
 			counter++;
 			pane.update(dis, nodeArea, sizeX, sizeY, dimension.getStartX());
 			barrier.await();
-			dos.writeUTF("proceed");
+			if (Main.iterations - counter > 0) {
+				dos.writeUTF("proceed");				
+			}
+			else {
+				dos.writeUTF("finished");
+				Controller.run = false;
+			}
 	        dos.flush();
 		}
 	}

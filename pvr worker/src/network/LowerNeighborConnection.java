@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
+import main.Controller;
 import cube.Block;
 
 public class LowerNeighborConnection extends Thread {
@@ -78,7 +79,7 @@ public class LowerNeighborConnection extends Thread {
 	}
 	
 	private void update() throws IOException, InterruptedException, BrokenBarrierException {
-		while (true) {
+		while (Controller.run) {
 			System.out.println("Lower before barrier");
 	        barrier.await();
 	        

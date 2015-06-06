@@ -11,6 +11,8 @@ public class Controller extends Thread {
 	private MainPane pane;
 	private CyclicBarrier barrier;
 	
+	public static volatile boolean run = true;
+	
 	public Controller(MainPane pane, CyclicBarrier barrier) {
 		this.pane = pane;
 		this.barrier = barrier;
@@ -38,7 +40,7 @@ public class Controller extends Thread {
 	
 	private void receiveData() {
 		try {
-			while (true) {
+			while (run) {
 				barrier.await();				
 			}
 		} catch (InterruptedException e) {
@@ -46,5 +48,7 @@ public class Controller extends Thread {
 		} catch (BrokenBarrierException e) {
 			e.printStackTrace();
 		}
+		System.out.println("calculation finished");
+		System.exit(0);
 	}
 }
