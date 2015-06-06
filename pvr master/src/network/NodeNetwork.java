@@ -70,6 +70,16 @@ public class NodeNetwork extends Thread {
         }
 	}
 	
+	private void sendInitData() throws IOException {
+		dos = new DataOutputStream(new BufferedOutputStream(sender.getOutputStream()));
+		sendLowerXSocket(dos);
+		sendHigherXSocket(dos);
+		sendNodeDimensions(dos);
+		
+		dis = new DataInputStream(new BufferedInputStream(sender.getInputStream()));
+		System.out.println(dis.readUTF());
+	}
+	
 	private void sendLowerXSocket(DataOutputStream dos) throws IOException {
 		if (lowerXSocket != null) {
 			dos.writeUTF(lowerXSocket.getIp());
@@ -101,16 +111,9 @@ public class NodeNetwork extends Thread {
 		dos.writeInt(dimension.getMaxY());
 		dos.writeInt(dimension.getMaxZ());
 		dos.flush();
-	}
-	
-	private void sendInitData() throws IOException {
-		dos = new DataOutputStream(new BufferedOutputStream(sender.getOutputStream()));
-		sendLowerXSocket(dos);
-		sendHigherXSocket(dos);
-		sendNodeDimensions(dos);
 		
-		dis = new DataInputStream(new BufferedInputStream(sender.getInputStream()));
-		System.out.println(dis.readUTF());
+		dos.writeUTF(Main.type.getType());
+		dos.flush();
 	}
 	
 	private void sendStart() throws IOException {

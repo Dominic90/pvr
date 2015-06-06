@@ -11,6 +11,7 @@ import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 import main.Controller;
+import main.EType;
 import cube.Block;
 
 public class MasterConnection extends Thread {
@@ -127,6 +128,17 @@ public class MasterConnection extends Thread {
         	hasHigherX = true;
         }
         block = controller.createBlock(dimension, hasLowerX, hasHigherX);
+        
+        String type = dis.readUTF();
+        if (type.equals(EType.BORDER.getType())) {
+        	block.setCalculationType(EType.BORDER);
+        }
+        else if (type.equals(EType.MIDDLE.getType())) {
+        	block.setCalculationType(EType.MIDDLE);
+        }
+        else {
+        	block.setCalculationType(EType.BORDER_SINUS);
+        }
         
         System.out.println(startX + " " + endX + " " +  maxY + " " + maxZ);
 	}

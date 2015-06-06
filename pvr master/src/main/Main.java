@@ -18,9 +18,9 @@ public class Main extends Application {
 	public static int x;
 	public static int y;
 	public static int z;
-	public static EType type = EType.BORDER;
+	public static EType type;
 	public static List<Node> nodes;
-	public static int iterations = 10;
+	public static int iterations;
 	
 	private static CyclicBarrier barrier;
 	
@@ -33,8 +33,8 @@ public class Main extends Application {
 		x = 100;
 		y = 100;
 		z = 100;
-		type = EType.BORDER;
-		iterations = 100;
+		type = EType.MIDDLE;
+		iterations = 25;
 		List<SocketInformation> sockets = new ArrayList<SocketInformation>();
 		sockets.add(new SocketInformation("localhost", 8000));
 		sockets.add(new SocketInformation("localhost", 8010));

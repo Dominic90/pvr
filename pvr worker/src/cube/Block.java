@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import main.EType;
 import network.NodeDimension;
 
 public class Block {
@@ -50,7 +51,7 @@ public class Block {
 		block = new ICube[xSize][dimension.getMaxY()][dimension.getMaxZ()];
 		
 		createBlock();
-		setBorderHeat();
+//		setBorderHeat();
 	}
 	
 	private void createBlock() {
@@ -70,6 +71,19 @@ public class Block {
 		}
 	}
 	
+	public void setCalculationType(EType type) {
+		System.out.println("Calculation Type: " + type.getType());
+		if (type.equals(EType.BORDER)) {
+			setBorderHeat();
+		}
+		else if (type.equals(EType.MIDDLE)) {
+			setMiddleHeat();
+		}
+		else if (type.equals(EType.BORDER_SINUS)) {
+			setSinusHeat();
+		}
+	}
+	
 	private void setBorderHeat() {
 		for (int x = 0; x < block.length; x ++) {
 			for (int y = 0; y < block[x].length; y++) {
@@ -78,28 +92,72 @@ public class Block {
 		}
 	}
 	
-//	private void setMiddleHeat() {
-//		int startX = Main.x / 2 - DIFF_TO_CENTER;
-//		int endX = Main.x / 2 + DIFF_TO_CENTER;
-//		int startY = Main.y / 2 - DIFF_TO_CENTER;
-//		int endY = Main.y / 2 + DIFF_TO_CENTER;
-//		int startZ = Main.z / 2 - DIFF_TO_CENTER;
-//		int endZ = Main.z / 2 + DIFF_TO_CENTER;
-//		
-//		for (int x = startX; x < endX; x ++) {
-//			for (int y = startY; y < endY; y++) {
-//				for (int z = startZ; z < endZ; z++) {
-//					block[x][y][z] = new BorderCube();
-//					block[x][y][z].setInitTemp(100);
-//				}
-//			}
-//		}
-//	}
+	private void setMiddleHeat() {
+		if (isMiddleHeatFullInNode()) {
+			System.out.println("Middle Heat Full");
+			int startX = dimension.getMiddleX() - 5 - dimension.getStartX();
+			int endX = dimension.getEndX() - dimension.getMiddleX() + 5;
+			for (int x = startX; x < endX; x++) {
+				for (int y = dimension.getMiddleY() - 5; y < dimension.getMiddleY() + 5; y++) {
+					for (int z = dimension.getMiddleZ() - 5; z < dimension.getMiddleZ() + 5; z++) {
+						block[x][y][z] = new BorderCube();
+						block[x][y][z].setInitTemp(100);
+					}
+				}
+			}
+		}
+		else if (isMiddleHeatPartiallyInNode()) {
+			setPartiallyMiddleHeat();
+		}
+//		setBorderHeat();
+	}
 	
-	private void setBorderSinus() {
+	private boolean isMiddleHeatFullInNode() {
+		int middleX = dimension.getMiddleX();
+		return (middleX - 5 > dimension.getStartX() && middleX + 5 < dimension.getEndX());
+	}
+	
+	private boolean isMiddleHeatPartiallyInNode() {
+		int middleX = dimension.getMiddleX();
+		System.out.println("Middle: " + dimension.getMiddleX() + " start: " + dimension.getStartX() + " end: " + dimension.getEndX());
+		return middleX - 5 < dimension.getStartX() && middleX + 5 > dimension.getStartX() ||
+				middleX - 5 < dimension.getEndX() && middleX + 5 > dimension.getEndX();
+	}
+	
+	private void setPartiallyMiddleHeat() {
+		int middleX = dimension.getMiddleX();
+		if (middleX - 5 < dimension.getStartX() && middleX + 5 > dimension.getStartX()) {
+			int xSize = middleX + 5 - dimension.getStartX();
+			System.out.println("XSize Start: " + xSize);
+			for (int x = 0; x < xSize; x++) {
+				System.out.println(x);
+				for (int y = dimension.getMiddleY() - 5; y < dimension.getMiddleY() + 5; y++) {
+					for (int z = dimension.getMiddleZ() - 5; z < dimension.getMiddleZ() + 5; z++) {
+						block[x][y][z] = new BorderCube();
+						block[x][y][z].setInitTemp(100);
+					}
+				}
+			}
+		}
+		else {
+			int xSize = dimension.getEndX() - middleX - 5;
+			System.out.println("XSize End: " + xSize + " " + middleX + " " + (middleX + xSize) + " " + block.length);
+			for (int x = block.length + xSize; x < block.length; x++) {
+				System.out.println(x);
+				for (int y = dimension.getMiddleY() - 5; y < dimension.getMiddleY() + 5; y++) {
+					for (int z = dimension.getMiddleZ() - 5; z < dimension.getMiddleZ() + 5; z++) {
+						block[x][y][z] = new BorderCube();
+						block[x][y][z].setInitTemp(100);
+					}
+				}
+			}
+		}
+	}
+	
+	private void setSinusHeat() {
 		for (int x = 0; x < block.length; x ++) {
-			for (int z = 0; z < block[x][0].length; z++) {
-				block[x][0][z] = new SinusHeatCube();
+			for (int y = 0; y < block[x].length; y++) {
+				block[x][y][0] = new SinusHeatCube();
 			}
 		}
 	}
