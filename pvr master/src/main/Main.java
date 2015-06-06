@@ -30,16 +30,16 @@ public class Main extends Application {
 	}
 	
 	public static void processArgs(String args[]) {
-		x = 100;
-		y = 100;
-		z = 100;
-		type = EType.MIDDLE;
-		iterations = 25;
+		x = 300;
+		y = 700;
+		z = 700;
+		type = EType.BORDER;
+		iterations = 2500;
 		List<SocketInformation> sockets = new ArrayList<SocketInformation>();
 		sockets.add(new SocketInformation("localhost", 8000));
 		sockets.add(new SocketInformation("localhost", 8010));
-//		sockets.add(new SocketInformation("localhost", 8020));
-//		sockets.add(new SocketInformation("localhost", 8030));
+		sockets.add(new SocketInformation("localhost", 8020));
+		sockets.add(new SocketInformation("localhost", 8030));
 		nodes = new ArrayList<Node>();
 		int xSize = x / sockets.size();
 		barrier = new CyclicBarrier(sockets.size() + 1);
