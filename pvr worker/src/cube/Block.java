@@ -8,9 +8,7 @@ import main.EType;
 import network.NodeDimension;
 
 public class Block {
-	
-	private static final int DIFF_TO_CENTER = 5;
-	
+		
 	private ICube[][][] block;
 	private int middleY;
 	
@@ -18,22 +16,6 @@ public class Block {
 	private int skipEndX = 0;
 	
 	private NodeDimension dimension;
-	
-//	public Block() {
-//		middleZ =  Main.z / 2;
-//		this.headmap = headmap;
-//		block = new ICube[Main.x][Main.y][Main.z];
-//		createBlock();
-//		if (Main.type == EType.BORDER) {
-//			setBorderHeat();			
-//		}
-//		else if (Main.type == EType.MIDDLE) {
-//			setMiddleHeat();
-//		}
-//		else {
-//			setBorderSinus();
-//		}
-//	}
 	
 	public Block(NodeDimension dimension, boolean hasLowerX, boolean hasHigherX) {
 		this.dimension = dimension;
@@ -46,21 +28,18 @@ public class Block {
 			xSize++;
 			skipEndX = 1;
 		}
-		middleY = dimension.getMaxY() / 2;
+		middleY = dimension.getMiddleY();
 		System.out.println("Size of X: " + xSize);
-		block = new ICube[xSize][dimension.getMaxY()][dimension.getMaxZ()];
 		
-		createBlock();
-//		setBorderHeat();
+		createBlock(xSize);
 	}
 	
-	private void createBlock() {
+	private void createBlock(int xSize) {
+		block = new ICube[xSize][dimension.getMaxY()][dimension.getMaxZ()];
 		for (int x = 0; x < block.length; x ++) {
 			for (int y = 0; y < block[x].length; y++) {
 				for (int z = 0; z < block[x][y].length; z++) {
-					if ((x == 0 && dimension.getStartX() == 0) || y == 0 || z == 0 || 
-							(x == block.length - 1 && dimension.getEndX() == dimension.getMaxX() - 1) || 
-							y == block[x].length - 1 || z == block[x][y].length - 1) {
+					if (needsBorderCube(x, y, z)) {
 						block[x][y][z] = new BorderCube();
 					}
 					else {
@@ -69,6 +48,12 @@ public class Block {
 				}
 			}
 		}
+	}
+	
+	private boolean needsBorderCube(int x, int y, int z) {
+		return ((x == 0 && dimension.getStartX() == 0) || y == 0 || z == 0 || 
+				(x == block.length - 1 && dimension.getEndX() == dimension.getMaxX() - 1) || 
+				y == block[x].length - 1 || z == block[x][y].length - 1);
 	}
 	
 	public void setCalculationType(EType type) {
@@ -109,7 +94,6 @@ public class Block {
 		else if (isMiddleHeatPartiallyInNode()) {
 			setPartiallyMiddleHeat();
 		}
-//		setBorderHeat();
 	}
 	
 	private boolean isMiddleHeatFullInNode() {
