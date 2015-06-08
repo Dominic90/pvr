@@ -9,7 +9,7 @@ import network.NodeDimension;
 
 public class Block {
 		
-	private ICube[][][] block;
+	private Cube[][][] block;
 	private int middleY;
 	
 	private int skipStartX = 0;
@@ -35,7 +35,7 @@ public class Block {
 	}
 	
 	private void createBlock(int xSize) {
-		block = new ICube[xSize][dimension.getMaxY()][dimension.getMaxZ()];
+		block = new Cube[xSize][dimension.getMaxY()][dimension.getMaxZ()];
 		for (int x = 0; x < block.length; x ++) {
 			for (int y = 0; y < block[x].length; y++) {
 				for (int z = 0; z < block[x][y].length; z++) {

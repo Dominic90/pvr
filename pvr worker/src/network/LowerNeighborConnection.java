@@ -15,9 +15,8 @@ import cube.Block;
 
 public class LowerNeighborConnection extends Thread {
 
-	protected Block block;
-	protected int port;
-	protected CyclicBarrier barrier;
+	private Block block;
+	private CyclicBarrier barrier;
 	
 	private ServerSocket clientConnect;
 	private Socket client;
@@ -25,7 +24,6 @@ public class LowerNeighborConnection extends Thread {
 	private DataOutputStream dos;
 	
 	public LowerNeighborConnection(int port, Block block, CyclicBarrier barrier) {
-		this.port = port;
 		this.block = block;
 		this.barrier = barrier;
 		System.out.println("ServerSocketPort: " + port);
@@ -53,22 +51,7 @@ public class LowerNeighborConnection extends Thread {
 			e.printStackTrace();
 		}
 		finally {
-			try {
-				if (dis != null) {
-					dis.close();
-				}
-				if (dos != null) {
-					dos.close();
-				}
-				if (client != null) {
-					client.close();
-				}
-				if (clientConnect != null) {
-					clientConnect.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			closeResources();
 		}
 	}
 	
@@ -88,6 +71,25 @@ public class LowerNeighborConnection extends Thread {
 	        block.sendToNeighbor(1, dos);
 			
 	        barrier.await();
+		}
+	}
+	
+	private void closeResources() {
+		try {
+			if (dis != null) {
+				dis.close();
+			}
+			if (dos != null) {
+				dos.close();
+			}
+			if (client != null) {
+				client.close();
+			}
+			if (clientConnect != null) {
+				clientConnect.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

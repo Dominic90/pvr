@@ -1,8 +1,8 @@
 package cube;
 
-public class NormalCube implements ICube {
+public class NormalCube implements Cube {
 
-	private static final float alpha = (float)0.1;
+	private static float alpha = (float)0.1;
 	
 	private float currentTemp = 0;
 	private float newTemp = 0;
@@ -23,7 +23,7 @@ public class NormalCube implements ICube {
 	}
 	
 	@Override
-	public void setNewTemp(ICube[][][] block, int x, int y, int z) {
+	public void setNewTemp(Cube[][][] block, int x, int y, int z) {
 		float factor = alpha * 1 / (1 * 1);
 		float sum = block[x+1][y][z].getCurrentTemp() + block[x-1][y][z].getCurrentTemp() + 
 				block[x][y+1][z].getCurrentTemp() + block[x][y-1][z].getCurrentTemp() + 

@@ -1,6 +1,6 @@
 package cube;
 
-public class BorderCube implements ICube {
+public class BorderCube implements Cube {
 
 	private float temp = 0;
 	
@@ -24,7 +24,7 @@ public class BorderCube implements ICube {
 	}
 	
 	@Override
-	public void setNewTemp(ICube[][][] block, int x, int y, int z) {
+	public void setNewTemp(Cube[][][] block, int x, int y, int z) {
 		
 	}
 	

@@ -59,14 +59,14 @@ public class MainPane extends ScrollPane {
 				System.out.println("node area lenght: " + nodeArea.length);
 				for (int x = 0; x < nodeArea.length; x++) {
 		        	for (int y = 0; y < nodeArea[x].length; y++) {
-		        		update(x + startX, y, (float)nodeArea[x][y]);
+		        		setRectangleColor(x + startX, y, (float)nodeArea[x][y]);
 		        	}
 		        }
 			}
 		});
 	}
 	
-	public void update(int x, int y, float temp) {
+	private void setRectangleColor(int x, int y, float temp) {
 		Color color = null;
 		if (temp < MIN_TEMP || temp > MAX_TEMP) {
 			 color = Color.BLACK ;
