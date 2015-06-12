@@ -2,10 +2,13 @@ package cube;
 
 public class NormalCube implements ICube {
 
-	private static final float alpha = (float)0.1;
+	public static float alpha = (float)0.1;
 	
 	private float currentTemp = 0;
 	private float newTemp = 0;
+	
+	public NormalCube() {
+	}
 	
 	@Override
 	public float getCurrentTemp() {
@@ -15,6 +18,7 @@ public class NormalCube implements ICube {
 	@Override
 	public void setInitTemp(float temp) {
 		this.currentTemp = temp;
+		this.newTemp = temp;
 	}
 	
 	@Override

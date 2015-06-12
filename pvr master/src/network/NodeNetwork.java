@@ -74,6 +74,7 @@ public class NodeNetwork extends Thread {
 		dos = new DataOutputStream(new BufferedOutputStream(sender.getOutputStream()));
 		sendLowerXSocket(dos);
 		sendHigherXSocket(dos);
+		sendInitialValues(dos);
 		sendNodeDimensions(dos);
 		
 		dis = new DataInputStream(new BufferedInputStream(sender.getInputStream()));
@@ -104,12 +105,26 @@ public class NodeNetwork extends Thread {
 		dos.flush();
 	}
 	
+	private void sendInitialValues(DataOutputStream dos) throws IOException {		
+		
+	}
+	
 	private void sendNodeDimensions(DataOutputStream dos) throws IOException {
 		dos.writeInt(dimension.getStartX());
 		dos.writeInt(dimension.getEndX());
 		dos.writeInt(dimension.getMaxX());
 		dos.writeInt(dimension.getMaxY());
 		dos.writeInt(dimension.getMaxZ());
+		dos.flush();
+		
+		dos.writeFloat(Main.leftTemperature);
+		dos.writeFloat(Main.rightTemperature);
+		dos.writeFloat(Main.topTemperature);
+		dos.writeFloat(Main.bottomTemperature);
+		dos.writeFloat(Main.frontTemperature);
+		dos.writeFloat(Main.backTemperature);
+		dos.writeFloat(Main.innerTemperature);
+		dos.writeFloat(Main.alpha);
 		dos.flush();
 		
 		dos.writeUTF(Main.type.getType());

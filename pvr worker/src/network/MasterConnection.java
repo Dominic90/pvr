@@ -13,6 +13,7 @@ import java.util.concurrent.CyclicBarrier;
 import main.Controller;
 import main.EType;
 import cube.Block;
+import cube.NormalCube;
 
 public class MasterConnection extends Thread {
 
@@ -68,6 +69,7 @@ public class MasterConnection extends Thread {
 		dis = new DataInputStream(new BufferedInputStream(client.getInputStream()));
         receiveLowerXSocket(dis);
         receiveHigherXSocket(dis);
+        receiveInitialValues(dis);
         receiveNodeDimension(dis);
         
         int barrierCount = 2;
@@ -110,6 +112,10 @@ public class MasterConnection extends Thread {
         System.out.println(higherXSocketIp + ":" + higherXSocketPort);
 	}
 	
+	private void receiveInitialValues(DataInputStream dis) throws IOException {
+		
+	}
+	
 	private void receiveNodeDimension(DataInputStream dis) throws IOException {
 		int startX = dis.readInt();
         int endX = dis.readInt();
@@ -128,6 +134,19 @@ public class MasterConnection extends Thread {
         	hasHigherX = true;
         }
         block = controller.createBlock(dimension, hasLowerX, hasHigherX);
+        
+        float leftTemperature = dis.readFloat();
+		float rightTemperature = dis.readFloat();
+		float topTemperature = dis.readFloat();
+		float bottomTemperature = dis.readFloat();
+		float frontTemperature = dis.readFloat();
+		float backTemperature = dis.readFloat();
+		float innerTemperature = dis.readFloat();
+		float alpha = dis.readFloat();
+		
+		block.setInitValues(leftTemperature, rightTemperature, topTemperature, bottomTemperature, frontTemperature, 
+				backTemperature, innerTemperature);
+		NormalCube.alpha = alpha;
         
         String type = dis.readUTF();
         if (type.equals(EType.BORDER.getType())) {

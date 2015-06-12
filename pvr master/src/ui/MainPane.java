@@ -25,13 +25,13 @@ public class MainPane extends ScrollPane {
 	
 	public MainPane() {
 		inner = new Pane();
-		inner.setPrefSize(Main.x * elementSize, Main.y * elementSize);
+		inner.setPrefSize(Main.sizeX * elementSize, Main.sizeY * elementSize);
 		setContent(inner);
 		initHeatmap();
 	}
 	
 	private void initHeatmap() {
-		headmap = new Rectangle[Main.x][Main.y];
+		headmap = new Rectangle[Main.sizeX][Main.sizeY];
 		for (int x = 0; x < headmap.length; x++) {
 			for (int y = 0; y < headmap[x].length; y ++) {
 				headmap[x][y] = new Rectangle(x * elementSize, y * elementSize, elementSize, elementSize);

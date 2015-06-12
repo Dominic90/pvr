@@ -9,13 +9,22 @@ import network.NodeDimension;
 
 public class Block {
 		
+	private float leftTemperature;
+	private float rightTemperature; 
+	private float topTemperature;
+	private float bottomTemperature;
+	private float frontTemperature;
+	private float backTemperature;
+	private float innerTemperature;
+	
 	private ICube[][][] block;
-	private int middleY;
+	private int middleZ;
 	
 	private int skipStartX = 0;
 	private int skipEndX = 0;
 	
 	private NodeDimension dimension;
+	private EType type;
 	
 	public Block(NodeDimension dimension, boolean hasLowerX, boolean hasHigherX) {
 		this.dimension = dimension;
@@ -28,7 +37,7 @@ public class Block {
 			xSize++;
 			skipEndX = 1;
 		}
-		middleY = dimension.getMiddleY();
+		middleZ = dimension.getMiddleZ();
 		System.out.println("Size of X: " + xSize);
 		
 		createBlock(xSize);
@@ -57,6 +66,7 @@ public class Block {
 	}
 	
 	public void setCalculationType(EType type) {
+		this.type = type;
 		System.out.println("Calculation Type: " + type.getType());
 		if (type.equals(EType.BORDER)) {
 			setBorderHeat();
@@ -71,8 +81,8 @@ public class Block {
 	
 	private void setBorderHeat() {
 		for (int x = 0; x < block.length; x ++) {
-			for (int y = 0; y < block[x].length; y++) {
-				block[x][y][0].setInitTemp(100);
+			for (int z = 0; z < block[x][0].length; z++) {
+				block[x][0][z].setInitTemp(leftTemperature);
 			}
 		}
 	}
@@ -140,8 +150,95 @@ public class Block {
 	
 	private void setSinusHeat() {
 		for (int x = 0; x < block.length; x ++) {
-			for (int y = 0; y < block[x].length; y++) {
-				block[x][y][0] = new SinusHeatCube();
+			for (int z = 0; z < block[x][0].length; z++) {
+				block[x][0][z] = new SinusHeatCube();
+			}
+		}
+	}
+	
+	public void setInitValues(float leftTemperature, float rightTemperature, float topTemperature, float bottomTemperature,
+			float frontTemperature, float backTemperature, float innerTemperature) {
+		this.leftTemperature = leftTemperature;
+		this.rightTemperature = rightTemperature;
+		this.topTemperature = topTemperature;
+		this.bottomTemperature = bottomTemperature;
+		this.frontTemperature = frontTemperature;
+		this.backTemperature = backTemperature;
+		this.innerTemperature = innerTemperature;
+		
+		setBorderTemperatures();
+	}
+	
+	private void setBorderTemperatures() {
+		setLeftTemperature();
+		setRightTemperature();
+		setTopTemperature();
+		setBottomTemperature();
+		setFrontTemperature();
+		setBackTemperature();
+		setInnerTemperature();
+	}
+	
+	private void setLeftTemperature() {
+		int y = 0;
+		for (int x = 0; x < block.length; x ++) {
+			for (int z = 0; z < block[x][y].length; z++) {
+				block[x][y][z].setInitTemp(rightTemperature);
+			}
+		}
+	}
+	
+	private void setRightTemperature() {
+		int y = block[0].length - 1;
+		for (int x = 0; x < block.length; x ++) {
+			for (int z = 0; z < block[x][y].length; z++) {
+				block[x][y][z].setInitTemp(rightTemperature);
+			}
+		}
+	}
+	
+	private void setTopTemperature() {
+		int z = block[0][0].length - 1;
+		for (int x = 1; x < block.length - 1; x++) {
+			for (int y = 1; y < block[x].length - 1; y++) {
+				block[x][y][z].setInitTemp(topTemperature);
+			}
+		}
+	}
+	
+	private void setBottomTemperature() {
+		int z = 0;
+		for (int x = 1; x < block.length - 1; x++) {
+			for (int y = 1; y < block[x].length - 1; y++) {
+				block[x][y][z].setInitTemp(bottomTemperature);
+			}
+		}
+	}
+	
+	private void setFrontTemperature() {
+		int x = block.length - 1;
+		for (int y = 1; y < block[x].length - 1; y++) {
+			for (int z = 1; z < block[x][y].length - 1; z++) {
+				block[x][y][z].setInitTemp(frontTemperature);
+			}
+		}
+	}
+	
+	private void setBackTemperature() {
+		int x = 0;
+		for (int y = 1; y < block[x].length - 1; y++) {
+			for (int z = 1; z < block[x][y].length - 1; z++) {
+				block[x][y][z].setInitTemp(backTemperature);
+			}
+		}
+	}
+	
+	private void setInnerTemperature() {
+		for (int x = 1; x < block.length - 1; x++) {
+			for (int y = 1; y < block[x].length - 1; y++) {
+				for(int z = 1; z < block[x][y].length - 1; z++) {
+					block[x][y][z].setInitTemp(innerTemperature);
+				}
 			}
 		}
 	}
@@ -170,8 +267,8 @@ public class Block {
 	public void sendToMaster(DataOutputStream dos) throws IOException {
 		System.out.println("SendToMaster: " + skipStartX + " " + (block.length - skipEndX));
 		for (int x = skipStartX; x < block.length - skipEndX; x ++) {
-			for (int z = 0; z < block[x][middleY].length; z++) {
-				dos.writeFloat(block[x][middleY][z].getCurrentTemp());
+			for (int y = 0; y < block[x].length; y++) {
+				dos.writeFloat(block[x][y][middleZ].getCurrentTemp()); //TODO
 			}
 			dos.flush();
 		}
