@@ -8,7 +8,6 @@ import main.EType;
 import network.NodeDimension;
 
 public class Block {
-		
 	private float leftTemperature;
 	private float rightTemperature; 
 	private float topTemperature;
@@ -17,7 +16,7 @@ public class Block {
 	private float backTemperature;
 	private float innerTemperature;
 	
-	private ICube[][][] block;
+	private Cube[][][] block;
 	private int middleZ;
 	
 	private int skipStartX = 0;
@@ -44,7 +43,7 @@ public class Block {
 	}
 	
 	private void createBlock(int xSize) {
-		block = new ICube[xSize][dimension.getMaxY()][dimension.getMaxZ()];
+		block = new Cube[xSize][dimension.getMaxY()][dimension.getMaxZ()];
 		for (int x = 0; x < block.length; x ++) {
 			for (int y = 0; y < block[x].length; y++) {
 				for (int z = 0; z < block[x][y].length; z++) {
@@ -216,20 +215,31 @@ public class Block {
 	}
 	
 	private void setFrontTemperature() {
-		int x = block.length - 1;
-		for (int y = 1; y < block[x].length - 1; y++) {
-			for (int z = 1; z < block[x][y].length - 1; z++) {
-				block[x][y][z].setInitTemp(frontTemperature);
-			}
+//		System.out.println(dimension.getMaxX() + " " + dimension.getEndX());
+//		try {
+//			Thread.sleep(5000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		if (dimension.getMaxX() == dimension.getEndX() + 1) {
+			int x = block.length - 1;
+			for (int y = 1; y < block[x].length - 1; y++) {
+				for (int z = 1; z < block[x][y].length - 1; z++) {
+					block[x][y][z].setInitTemp(frontTemperature);
+				}
+			}			
 		}
 	}
 	
 	private void setBackTemperature() {
-		int x = 0;
-		for (int y = 1; y < block[x].length - 1; y++) {
-			for (int z = 1; z < block[x][y].length - 1; z++) {
-				block[x][y][z].setInitTemp(backTemperature);
-			}
+		if (dimension.getStartX() == 0) {
+			int x = 0;
+			for (int y = 1; y < block[x].length - 1; y++) {
+				for (int z = 1; z < block[x][y].length - 1; z++) {
+					block[x][y][z].setInitTemp(backTemperature);
+				}
+			}			
 		}
 	}
 	

@@ -1,6 +1,6 @@
 package cube;
 
-public class SinusHeatCube implements ICube {
+public class SinusHeatCube implements Cube {
 
 	private static final int STEP_WIDHT = 64;
 	private float temp = 0;
@@ -25,7 +25,7 @@ public class SinusHeatCube implements ICube {
 	}
 	
 	@Override
-	public void setNewTemp(ICube[][][] block, int x, int y, int z) {
+	public void setNewTemp(Cube[][][] block, int x, int y, int z) {
 		iteration = iteration % STEP_WIDHT;
 		iteration = iteration + 1;
 		temp = (float)Math.sin(Math.PI * ((float)iteration / STEP_WIDHT)) * 100;

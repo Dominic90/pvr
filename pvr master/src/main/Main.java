@@ -53,7 +53,7 @@ public class Main extends Application {
 		iterations = 5000;
 		List<SocketInformation> sockets = new ArrayList<SocketInformation>();
 		sockets.add(new SocketInformation("localhost", 8000));
-//		sockets.add(new SocketInformation("localhost", 8010));
+		sockets.add(new SocketInformation("localhost", 8010));
 //		sockets.add(new SocketInformation("localhost", 8020));
 //		sockets.add(new SocketInformation("localhost", 8030));
 		nodes = new ArrayList<Node>();

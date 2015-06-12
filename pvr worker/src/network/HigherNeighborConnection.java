@@ -14,10 +14,9 @@ import cube.Block;
 
 public class HigherNeighborConnection extends Thread {
 
-	protected Block block;
-	protected SocketInformation higherNeighborSocket;
-	protected int port;
-	protected CyclicBarrier barrier;
+	private Block block;
+	private SocketInformation higherNeighborSocket;
+	private CyclicBarrier barrier;
 	
 	private Socket socket;
 	private DataOutputStream dos;

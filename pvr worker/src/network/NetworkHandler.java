@@ -12,9 +12,9 @@ public class NetworkHandler {
 	private Controller controller;
 	private Block block;
 	
-	private MasterConnection masterHandler;
-	private LowerNeighborConnection informLower;
-	private HigherNeighborConnection informHigher;
+	private MasterConnection masterConnection;
+	private LowerNeighborConnection lowerNeighborConnection;
+	private HigherNeighborConnection higherNeighborConnection;
 	
 	private CyclicBarrier barrier;
 	
@@ -24,8 +24,8 @@ public class NetworkHandler {
 	}
 	
 	public void waitForInitInformation(Thread controllerThread) {
-		masterHandler = new MasterConnection(this, controllerThread, controller, port);
-		masterHandler.start();
+		masterConnection = new MasterConnection(this, controllerThread, controller, port);
+		masterConnection.start();
 	}
 	
 	public void waitForStart() {
@@ -40,15 +40,15 @@ public class NetworkHandler {
 	
 	public void startInformLower(SocketInformation lowerXSocket) {
 		if (lowerXSocket != null) {
-			informLower = new LowerNeighborConnection(port + 1, block, barrier);
-        	informLower.start();
+			lowerNeighborConnection = new LowerNeighborConnection(port + 1, block, barrier);
+        	lowerNeighborConnection.start();
         }
 	}
 	
 	public void startInformHigher(SocketInformation higherXSocket) {
 		if (higherXSocket != null) {
-			informHigher = new HigherNeighborConnection(higherXSocket, block, barrier);
-        	informHigher.start();        	
+			higherNeighborConnection = new HigherNeighborConnection(higherXSocket, block, barrier);
+        	higherNeighborConnection.start();        	
         }
 	}
 	
