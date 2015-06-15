@@ -73,6 +73,9 @@ public class Block {
 		else if (type.equals(EType.MIDDLE)) {
 			setMiddleHeat();
 		}
+		else if (type.equals(EType.MIDDLE_LEFT)) {
+			setMiddleLeftHeat();
+		}
 		else if (type.equals(EType.BORDER_SINUS)) {
 			setSinusHeat();
 		}
@@ -147,6 +150,29 @@ public class Block {
 		}
 	}
 	
+	private void setMiddleLeftHeat() {
+		int lowestTemperature = (int)innerTemperature;
+		int highestTemperature = (int)leftTemperature;
+		int temperatureDifference = highestTemperature - lowestTemperature;
+		double maxDistanzeToMiddle = getMaxDistanceToMiddle();
+		for (int x = 0; x < block.length; x++) {
+			for (int z = 0; z < block[x][0].length; z++) {
+				double distanceToMiddle = getPythagorean(x + dimension.getStartX() - dimension.getMiddleX(), z - dimension.getMiddleZ());
+				double relDistanceToMiddle = (distanceToMiddle / maxDistanzeToMiddle);
+				double temp = temperatureDifference * relDistanceToMiddle;
+				block[x][0][z].setInitTemp((int)(highestTemperature - temp));
+			}
+		}
+	}
+	
+	private double getPythagorean(int a, int b) {
+		return Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+	}
+	
+	private double getMaxDistanceToMiddle() {
+		return getPythagorean(dimension.getMiddleX(), dimension.getMiddleZ());
+	}
+	
 	private void setSinusHeat() {
 		for (int x = 0; x < block.length; x ++) {
 			for (int z = 0; z < block[x][0].length; z++) {
@@ -215,13 +241,6 @@ public class Block {
 	}
 	
 	private void setFrontTemperature() {
-//		System.out.println(dimension.getMaxX() + " " + dimension.getEndX());
-//		try {
-//			Thread.sleep(5000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		if (dimension.getMaxX() == dimension.getEndX() + 1) {
 			int x = block.length - 1;
 			for (int y = 1; y < block[x].length - 1; y++) {
@@ -254,7 +273,6 @@ public class Block {
 	}
 	
 	public void calculate() {
-		System.out.println("Skip Start: " + skipStartX + " Skip End: " + skipEndX);
 		for (int x = skipStartX; x < block.length - skipEndX; x ++) {
 			for (int y = 0; y < block[x].length; y++) {
 				for (int z = 0; z < block[x][y].length; z++) {
@@ -275,7 +293,6 @@ public class Block {
 	}
 	
 	public void sendToMaster(DataOutputStream dos) throws IOException {
-		System.out.println("SendToMaster: " + skipStartX + " " + (block.length - skipEndX));
 		for (int x = skipStartX; x < block.length - skipEndX; x ++) {
 			for (int y = 0; y < block[x].length; y++) {
 				dos.writeFloat(block[x][y][middleZ].getCurrentTemp()); //TODO

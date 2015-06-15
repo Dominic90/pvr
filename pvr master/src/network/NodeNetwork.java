@@ -75,7 +75,6 @@ public class NodeNetwork extends Thread {
 		sendLowerXSocket(dos);
 		sendHigherXSocket(dos);
 		sendInitialValues(dos);
-		sendNodeDimensions(dos);
 		
 		dis = new DataInputStream(new BufferedInputStream(sender.getInputStream()));
 		System.out.println(dis.readUTF());
@@ -106,10 +105,6 @@ public class NodeNetwork extends Thread {
 	}
 	
 	private void sendInitialValues(DataOutputStream dos) throws IOException {		
-		
-	}
-	
-	private void sendNodeDimensions(DataOutputStream dos) throws IOException {
 		dos.writeInt(dimension.getStartX());
 		dos.writeInt(dimension.getEndX());
 		dos.writeInt(dimension.getMaxX());
@@ -137,9 +132,9 @@ public class NodeNetwork extends Thread {
 	}
 	
 	private void receiveData() throws IOException, InterruptedException, BrokenBarrierException {
-		int sizeX = dimension.getEndX() - dimension.getStartX() + 1; // TODO calculate for 1 worker
+		int sizeX = dimension.getEndX() - dimension.getStartX() + 1;
 		int sizeY = dimension.getMaxY();
-		System.out.println("Thread: " + nodeSocket.getPort() + " sizeX: " + sizeX + " sizeY: " + sizeY);
+		System.out.println("Node: " + nodeSocket.getIp() + " " + nodeSocket.getPort() + " sizeX: " + sizeX);
 		double[][] nodeArea = new double[sizeX][sizeY];
 		counter = 0;
 		while (Controller.run) {

@@ -8,6 +8,8 @@ public class Controller extends Thread {
 
 	private NetworkHandler networkHandler;
 	private Block block;
+	private long calculationTime = 0;
+	private long networkingTime = 0;
 	
 	public volatile static boolean run = true;
 	
@@ -30,18 +32,23 @@ public class Controller extends Thread {
 	
 	private void doCalculation() {
 		while (run) {
+			long calcStart = System.currentTimeMillis();
 			block.calculate();
 			block.updateValues();
+			calculationTime += System.currentTimeMillis() - calcStart;
+			long networkStart = System.currentTimeMillis();
 			networkHandler.endIteration();
+			networkingTime += System.currentTimeMillis() - networkStart;
 		}
 		
+		System.out.println("Calculation Time: " + calculationTime + " Networking Time: " + networkingTime);
 		System.out.println("Calculation finished");
 	}
 	
 	public Block createBlock(NodeDimension dimension, boolean hasLowerX, boolean hasHigherX) {
 		block = new Block(dimension, hasLowerX, hasHigherX);
 		networkHandler.setBlock(block);
-		System.out.println("End create of block");
+		System.out.println("End creation of block");
 		return block;
 	}
 	

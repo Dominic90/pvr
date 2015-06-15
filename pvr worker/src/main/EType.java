@@ -3,6 +3,7 @@ package main;
 public enum EType {
 	BORDER ("Border"),
 	MIDDLE ("Middle"),
+	MIDDLE_LEFT ("Middle Left"),
 	BORDER_SINUS ("Border_Sinus");
 	
 	public String type;

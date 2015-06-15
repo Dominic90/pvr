@@ -14,8 +14,8 @@ import main.Main;
 public class MainPane extends ScrollPane {
 
 	private static final double elementSize = 3;
-	private static final int MIN_TEMP = 0;
-	private static final int MAX_TEMP = 100;
+	public static int MIN_TEMP = 0;
+	public static int MAX_TEMP = 100;
 	private final static double BLUE_HUE = Color.BLUE.getHue() ;
     private final static double RED_HUE = Color.RED.getHue() ;
 	
@@ -56,7 +56,6 @@ public class MainPane extends ScrollPane {
 			
 			@Override
 			public void run() {
-				System.out.println("node area lenght: " + nodeArea.length);
 				for (int x = 0; x < nodeArea.length; x++) {
 		        	for (int y = 0; y < nodeArea[x].length; y++) {
 		        		setRectangleColor(x + startX, y, (float)nodeArea[x][y]);

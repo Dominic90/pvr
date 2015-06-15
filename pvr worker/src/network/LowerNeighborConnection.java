@@ -63,13 +63,9 @@ public class LowerNeighborConnection extends Thread {
 	
 	private void update() throws IOException, InterruptedException, BrokenBarrierException {
 		while (Controller.run) {
-			System.out.println("Lower before barrier");
 	        barrier.await();
-	        
-	        System.out.println("start update lower");
 	        block.receiveFromNeighbor(0, dis);
 	        block.sendToNeighbor(1, dos);
-			
 	        barrier.await();
 		}
 	}

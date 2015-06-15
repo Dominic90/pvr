@@ -54,8 +54,10 @@ public class NetworkHandler {
 	
 	public void endIteration() {
 		try {
+			System.out.println("Calculation finished");
 			barrier.await();
 			barrier.await();
+			System.out.println("Update finished");
 		} catch (InterruptedException | BrokenBarrierException e) {
 			e.printStackTrace();
 		}

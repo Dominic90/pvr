@@ -31,12 +31,15 @@ public class MasterConnection extends Thread {
 	private SocketInformation higherXSocket;
 	private Block block;
 	
+	private long masterConnectedTimeStamp;
+	private long calculationStartedTimeStamp;
+	
 	public MasterConnection(NetworkHandler networkHandler, Thread controllerThread, Controller controller, int port) {
 		this.networkHandler = networkHandler;
 		this.controllerThread = controllerThread;
 		this.controller = controller;
 		try {
-			System.out.println(port);
+			System.out.println("Listening for master on port: " + port);
 			clientConnect = new ServerSocket(port);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -48,7 +51,7 @@ public class MasterConnection extends Thread {
 		setName("Master handler Thread");
 		try {
 			receiveDataFromMaster();
-			System.out.println("Data received from master");
+			System.out.println("Initdata received from master");
 			waitForStart();
 			updateMaster();
 		} 
@@ -66,11 +69,11 @@ public class MasterConnection extends Thread {
 	
 	private void receiveDataFromMaster() throws IOException {
 		client = clientConnect.accept();
+		masterConnectedTimeStamp = System.currentTimeMillis();
 		dis = new DataInputStream(new BufferedInputStream(client.getInputStream()));
         receiveLowerXSocket(dis);
         receiveHigherXSocket(dis);
         receiveInitialValues(dis);
-        receiveNodeDimension(dis);
         
         int barrierCount = 2;
         if (higherXSocket != null) {
@@ -97,7 +100,7 @@ public class MasterConnection extends Thread {
         else {
         	lowerXSocket = null;
         }
-        System.out.println(lowerXSocketIp + ":" + lowerXSocketPort);
+        System.out.println("lower neighbor socket: " + lowerXSocketIp + ":" + lowerXSocketPort);
 	}
 	
 	private void receiveHigherXSocket(DataInputStream dis) throws IOException {
@@ -109,11 +112,13 @@ public class MasterConnection extends Thread {
         else {
         	higherXSocket = null;
         }
-        System.out.println(higherXSocketIp + ":" + higherXSocketPort);
+        System.out.println("higher neighbor socket: " + higherXSocketIp + ":" + higherXSocketPort);
 	}
 	
 	private void receiveInitialValues(DataInputStream dis) throws IOException {
-		
+		receiveNodeDimension(dis);
+        receiveInitTemperatures(dis);
+        receiveCalculationType(dis);
 	}
 	
 	private void receiveNodeDimension(DataInputStream dis) throws IOException {
@@ -134,8 +139,11 @@ public class MasterConnection extends Thread {
         	hasHigherX = true;
         }
         block = controller.createBlock(dimension, hasLowerX, hasHigherX);
-        
-        float leftTemperature = dis.readFloat();
+        System.out.println("Blockdimensions: " + startX + " " + endX + " " +  maxY + " " + maxZ);
+	}
+	
+	private void receiveInitTemperatures(DataInputStream dis) throws IOException {
+		float leftTemperature = dis.readFloat();
 		float rightTemperature = dis.readFloat();
 		float topTemperature = dis.readFloat();
 		float bottomTemperature = dis.readFloat();
@@ -147,25 +155,29 @@ public class MasterConnection extends Thread {
 		block.setInitValues(leftTemperature, rightTemperature, topTemperature, bottomTemperature, frontTemperature, 
 				backTemperature, innerTemperature);
 		NormalCube.alpha = alpha;
-        
-        String type = dis.readUTF();
+	}
+	
+	private void receiveCalculationType(DataInputStream dis) throws IOException {
+		String type = dis.readUTF();
         if (type.equals(EType.BORDER.getType())) {
         	block.setCalculationType(EType.BORDER);
         }
         else if (type.equals(EType.MIDDLE.getType())) {
         	block.setCalculationType(EType.MIDDLE);
         }
+        else if (type.equals(EType.MIDDLE_LEFT.getType())) {
+        	block.setCalculationType(EType.MIDDLE_LEFT);
+        }
         else {
         	block.setCalculationType(EType.BORDER_SINUS);
         }
-        
-        System.out.println(startX + " " + endX + " " +  maxY + " " + maxZ);
 	}
 	
 	private void waitForStart() throws IOException {
 		String command = dis.readUTF();
         System.out.println(command);
         networkHandler.startInformHigher(higherXSocket);
+        calculationStartedTimeStamp = System.currentTimeMillis();
         synchronized (controllerThread) {
         	controllerThread.notify();			
 		}
@@ -173,16 +185,15 @@ public class MasterConnection extends Thread {
 	
 	private void updateMaster() throws InterruptedException, BrokenBarrierException, IOException {
 		while(Controller.run) {
-			System.out.println("master before barrier");
 			barrier.await();
-			System.out.println("Start update master");
 			block.sendToMaster(dos);
 			String answer = dis.readUTF();
-			if (answer.equals("proceed")) {
-				System.out.println(answer);					
-			}
+			if (answer.equals("proceed")) {}
 			else {
 				System.out.println("Stop: " + answer);
+				long currentTime = System.currentTimeMillis();
+				System.out.println("Complete running time: " + (currentTime - masterConnectedTimeStamp));
+				System.out.println("Calculation running time: " + (currentTime - calculationStartedTimeStamp));
 				Controller.run = false;
 			}
 			barrier.await();
