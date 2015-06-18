@@ -7,8 +7,7 @@ public class NormalCube implements Cube {
 	private float currentTemp = 0;
 	private float newTemp = 0;
 	
-	public NormalCube() {
-	}
+	public NormalCube() {}
 	
 	@Override
 	public float getCurrentTemp() {

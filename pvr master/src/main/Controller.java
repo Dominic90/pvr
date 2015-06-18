@@ -49,6 +49,5 @@ public class Controller extends Thread {
 			e.printStackTrace();
 		}
 		System.out.println("calculation finished");
-		System.exit(0);
 	}
 }

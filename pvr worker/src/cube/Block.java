@@ -47,14 +47,18 @@ public class Block {
 		for (int x = 0; x < block.length; x ++) {
 			for (int y = 0; y < block[x].length; y++) {
 				for (int z = 0; z < block[x][y].length; z++) {
-					if (needsBorderCube(x, y, z)) {
-						block[x][y][z] = new BorderCube();
-					}
-					else {
-						block[x][y][z] = new NormalCube();						
-					}
+					setCube(x, y, z);
 				}
 			}
+		}
+	}
+	
+	private void setCube(int x, int y, int z) {
+		if (needsBorderCube(x, y, z)) {
+			block[x][y][z] = new BorderCube();
+		}
+		else {
+			block[x][y][z] = new NormalCube();						
 		}
 	}
 	
@@ -91,20 +95,24 @@ public class Block {
 	
 	private void setMiddleHeat() {
 		if (isMiddleHeatFullInNode()) {
-			System.out.println("Middle Heat Full");
-			int startX = dimension.getMiddleX() - 5 - dimension.getStartX();
-			int endX = dimension.getEndX() - dimension.getMiddleX() + 5;
-			for (int x = startX; x < endX; x++) {
-				for (int y = dimension.getMiddleY() - 5; y < dimension.getMiddleY() + 5; y++) {
-					for (int z = dimension.getMiddleZ() - 5; z < dimension.getMiddleZ() + 5; z++) {
-						block[x][y][z] = new BorderCube();
-						block[x][y][z].setInitTemp(100);
-					}
-				}
-			}
+			setMiddleHeadInFullNode();
 		}
 		else if (isMiddleHeatPartiallyInNode()) {
 			setPartiallyMiddleHeat();
+		}
+	}
+	
+	private void setMiddleHeadInFullNode() {
+		System.out.println("Middle Heat Full");
+		int startX = dimension.getMiddleX() - 5 - dimension.getStartX();
+		int endX = dimension.getEndX() - dimension.getMiddleX() + 5;
+		for (int x = startX; x < endX; x++) {
+			for (int y = dimension.getMiddleY() - 5; y < dimension.getMiddleY() + 5; y++) {
+				for (int z = dimension.getMiddleZ() - 5; z < dimension.getMiddleZ() + 5; z++) {
+					block[x][y][z] = new BorderCube();
+					block[x][y][z].setInitTemp(100);
+				}
+			}
 		}
 	}
 	
@@ -123,28 +131,34 @@ public class Block {
 	private void setPartiallyMiddleHeat() {
 		int middleX = dimension.getMiddleX();
 		if (middleX - 5 < dimension.getStartX() && middleX + 5 > dimension.getStartX()) {
-			int xSize = middleX + 5 - dimension.getStartX();
-			System.out.println("XSize Start: " + xSize);
-			for (int x = 0; x < xSize; x++) {
-				System.out.println(x);
-				for (int y = dimension.getMiddleY() - 5; y < dimension.getMiddleY() + 5; y++) {
-					for (int z = dimension.getMiddleZ() - 5; z < dimension.getMiddleZ() + 5; z++) {
-						block[x][y][z] = new BorderCube();
-						block[x][y][z].setInitTemp(100);
-					}
+			setPartiallyMiddleLargerMiddle(middleX);
+		}
+		else {
+			setPartiallyMiddleSmallerMiddle(middleX);
+		}
+	}
+	
+	private void setPartiallyMiddleLargerMiddle(int middleX) {
+		int xSize = middleX + 5 - dimension.getStartX();
+		System.out.println("XSize Start: " + xSize);
+		for (int x = 0; x < xSize; x++) {
+			for (int y = dimension.getMiddleY() - 5; y < dimension.getMiddleY() + 5; y++) {
+				for (int z = dimension.getMiddleZ() - 5; z < dimension.getMiddleZ() + 5; z++) {
+					block[x][y][z] = new BorderCube();
+					block[x][y][z].setInitTemp(100);
 				}
 			}
 		}
-		else {
-			int xSize = dimension.getEndX() - middleX - 5;
-			System.out.println("XSize End: " + xSize + " " + middleX + " " + (middleX + xSize) + " " + block.length);
-			for (int x = block.length + xSize; x < block.length; x++) {
-				System.out.println(x);
-				for (int y = dimension.getMiddleY() - 5; y < dimension.getMiddleY() + 5; y++) {
-					for (int z = dimension.getMiddleZ() - 5; z < dimension.getMiddleZ() + 5; z++) {
-						block[x][y][z] = new BorderCube();
-						block[x][y][z].setInitTemp(100);
-					}
+	}
+	
+	private void setPartiallyMiddleSmallerMiddle(int middleX) {
+		int xSize = dimension.getEndX() - middleX - 5;
+		System.out.println("XSize End: " + xSize + " " + middleX + " " + (middleX + xSize) + " " + block.length);
+		for (int x = block.length + xSize; x < block.length; x++) {
+			for (int y = dimension.getMiddleY() - 5; y < dimension.getMiddleY() + 5; y++) {
+				for (int z = dimension.getMiddleZ() - 5; z < dimension.getMiddleZ() + 5; z++) {
+					block[x][y][z] = new BorderCube();
+					block[x][y][z].setInitTemp(100);
 				}
 			}
 		}
@@ -295,7 +309,7 @@ public class Block {
 	public void sendToMaster(DataOutputStream dos) throws IOException {
 		for (int x = skipStartX; x < block.length - skipEndX; x ++) {
 			for (int y = 0; y < block[x].length; y++) {
-				dos.writeFloat(block[x][y][middleZ].getCurrentTemp()); //TODO
+				dos.writeFloat(block[x][y][middleZ].getCurrentTemp());
 			}
 			dos.flush();
 		}

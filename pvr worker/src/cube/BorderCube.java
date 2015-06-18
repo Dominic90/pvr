@@ -4,9 +4,7 @@ public class BorderCube implements Cube {
 
 	private float temp = 0;
 	
-	public BorderCube() {
-		
-	}
+	public BorderCube() {}
 
 	@Override
 	public float getCurrentTemp() {
@@ -19,17 +17,11 @@ public class BorderCube implements Cube {
 	}
 	
 	@Override
-	public void setNewTemp(float temp) {
-		
-	}
+	public void setNewTemp(float temp) {}
 	
 	@Override
-	public void setNewTemp(Cube[][][] block, int x, int y, int z) {
-		
-	}
+	public void setNewTemp(Cube[][][] block, int x, int y, int z) {}
 	
 	@Override
-	public void updateTemp() {
-			
-	}
+	public void updateTemp() {}
 }
