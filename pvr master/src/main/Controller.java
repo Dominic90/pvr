@@ -26,7 +26,7 @@ public class Controller extends Thread {
 	}
 	
 	private void initializeNodes() {
-		for (Node node : Main.nodes) {
+		for (Node node : Main.initialParameters.nodes) {
 			node.initalizeNode(pane);
 		}
 		try {

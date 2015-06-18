@@ -11,6 +11,7 @@ import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 import main.Controller;
+import main.InitialParameters;
 import main.Main;
 import ui.MainPane;
 
@@ -105,24 +106,32 @@ public class NodeNetwork extends Thread {
 	}
 	
 	private void sendInitialValues(DataOutputStream dos) throws IOException {		
+		sendDimensions(dos);
+		sendInitialParameters(dos);
+	}
+	
+	private void sendDimensions(DataOutputStream dos) throws IOException {
 		dos.writeInt(dimension.getStartX());
 		dos.writeInt(dimension.getEndX());
 		dos.writeInt(dimension.getMaxX());
 		dos.writeInt(dimension.getMaxY());
 		dos.writeInt(dimension.getMaxZ());
 		dos.flush();
-		
-		dos.writeFloat(Main.leftTemperature);
-		dos.writeFloat(Main.rightTemperature);
-		dos.writeFloat(Main.topTemperature);
-		dos.writeFloat(Main.bottomTemperature);
-		dos.writeFloat(Main.frontTemperature);
-		dos.writeFloat(Main.backTemperature);
-		dos.writeFloat(Main.innerTemperature);
-		dos.writeFloat(Main.alpha);
+	}
+	
+	private void sendInitialParameters(DataOutputStream dos) throws IOException {
+		InitialParameters initialParameters = Main.initialParameters;
+		dos.writeFloat(initialParameters.leftTemperature);
+		dos.writeFloat(initialParameters.rightTemperature);
+		dos.writeFloat(initialParameters.topTemperature);
+		dos.writeFloat(initialParameters.bottomTemperature);
+		dos.writeFloat(initialParameters.frontTemperature);
+		dos.writeFloat(initialParameters.backTemperature);
+		dos.writeFloat(initialParameters.innerTemperature);
+		dos.writeFloat(initialParameters.alpha);
 		dos.flush();
 		
-		dos.writeUTF(Main.type.getType());
+		dos.writeUTF(initialParameters.type.getType());
 		dos.flush();
 	}
 	
@@ -138,19 +147,23 @@ public class NodeNetwork extends Thread {
 		double[][] nodeArea = new double[sizeX][sizeY];
 		counter = 0;
 		while (Controller.run) {
-			System.out.println("Node: " + dimension.getStartX() + " " + counter);
-			counter++;
-			pane.update(dis, nodeArea, sizeX, sizeY, dimension.getStartX());
-			barrier.await();
-			if (Main.iterations - counter > 0) {
-				dos.writeUTF("proceed");				
-			}
-			else {
-				dos.writeUTF("finished");
-				Controller.run = false;
-			}
-	        dos.flush();
+			receiveIteration(nodeArea, sizeX, sizeY);
 		}
+	}
+	
+	private void receiveIteration(double[][] nodeArea, int sizeX, int sizeY) throws IOException, InterruptedException, BrokenBarrierException {
+		System.out.println("Node: " + dimension.getStartX() + " " + counter);
+		counter++;
+		pane.update(dis, nodeArea, sizeX, sizeY, dimension.getStartX());
+		barrier.await();
+		if (Main.initialParameters.iterations - counter > 0) {
+			dos.writeUTF("proceed");				
+		}
+		else {
+			dos.writeUTF("finished");
+			Controller.run = false;
+		}
+        dos.flush();
 	}
 	
 	private void closeResources() {
