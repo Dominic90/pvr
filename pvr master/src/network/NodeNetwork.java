@@ -14,6 +14,8 @@ import main.Controller;
 import main.InitialParameters;
 import main.Main;
 import ui.MainPane;
+import util.NodeDimension;
+import util.SocketInformation;
 
 public class NodeNetwork extends Thread {
 

@@ -1,4 +1,4 @@
-package network;
+package util;
 
 public class NodeDimension {
 
@@ -34,5 +34,17 @@ public class NodeDimension {
 
 	public int getMaxZ() {
 		return maxZ;
+	}
+	
+	public int getMiddleX() {
+		return maxX / 2;
+	}
+	
+	public int getMiddleY() {
+		return maxY / 2;
+	}
+	
+	public int getMiddleZ() {
+		return maxZ / 2;
 	}
 }

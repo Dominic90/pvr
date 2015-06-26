@@ -4,8 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import main.EType;
-import network.NodeDimension;
+import util.EType;
+import util.NodeDimension;
 
 public class Block {
 	private float leftTemperature;

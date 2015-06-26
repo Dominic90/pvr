@@ -1,8 +1,8 @@
 package main;
 
-import cube.Block;
 import network.NetworkHandler;
-import network.NodeDimension;
+import util.NodeDimension;
+import cube.Block;
 
 public class Controller extends Thread {
 

@@ -3,6 +3,8 @@ package network;
 import java.util.concurrent.CyclicBarrier;
 
 import ui.MainPane;
+import util.NodeDimension;
+import util.SocketInformation;
 
 public class Node {
 	private SocketInformation nodeSocket;

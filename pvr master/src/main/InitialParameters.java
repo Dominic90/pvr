@@ -3,9 +3,10 @@ package main;
 import java.util.ArrayList;
 import java.util.List;
 
-import ui.MainPane;
 import network.Node;
-import network.SocketInformation;
+import ui.MainPane;
+import util.EType;
+import util.SocketInformation;
 
 public class InitialParameters {
 

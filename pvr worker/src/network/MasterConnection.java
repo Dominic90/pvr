@@ -11,7 +11,9 @@ import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 import main.Controller;
-import main.EType;
+import util.EType;
+import util.NodeDimension;
+import util.SocketInformation;
 import cube.Block;
 import cube.NormalCube;
 

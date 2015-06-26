@@ -1,7 +1,6 @@
 package main;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 
 import javafx.application.Application;
@@ -9,9 +8,9 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import network.Node;
-import network.NodeDimension;
-import network.SocketInformation;
 import ui.MainPane;
+import util.NodeDimension;
+import util.SocketInformation;
 
 public class Main extends Application {
 

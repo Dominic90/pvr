@@ -1,4 +1,4 @@
-package network;
+package util;
 
 public class SocketInformation {
 

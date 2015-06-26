@@ -10,6 +10,7 @@ import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 import main.Controller;
+import util.SocketInformation;
 import cube.Block;
 
 public class HigherNeighborConnection extends Thread {
