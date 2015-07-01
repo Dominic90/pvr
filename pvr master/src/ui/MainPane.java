@@ -5,6 +5,9 @@ import java.io.IOException;
 
 import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -19,26 +22,27 @@ public class MainPane extends ScrollPane {
 	private final static double BLUE_HUE = Color.BLUE.getHue() ;
     private final static double RED_HUE = Color.RED.getHue() ;
 	
-	private Pane inner;
-	
-	private Rectangle[][] headmap;
+	private ImageView imageView;
+	private WritableImage heatmap;
 	
 	public MainPane() {
-		inner = new Pane();
-		inner.setPrefSize(Main.initialParameters.sizeX * elementSize, Main.initialParameters.sizeY * elementSize);
-		setContent(inner);
+		imageView = new ImageView();
+		imageView.setFitWidth(getPrefWidth());
+		setContent(imageView);
 		initHeatmap();
 	}
 	
 	private void initHeatmap() {
-		headmap = new Rectangle[Main.initialParameters.sizeX][Main.initialParameters.sizeY];
-		for (int x = 0; x < headmap.length; x++) {
-			for (int y = 0; y < headmap[x].length; y ++) {
-				headmap[x][y] = new Rectangle(x * elementSize, y * elementSize, elementSize, elementSize);
-				headmap[x][y].setFill(Color.web("#0000FF"));
-				inner.getChildren().add(headmap[x][y]);
+
+		heatmap = new WritableImage(Main.initialParameters.sizeX, Main.initialParameters.sizeY);
+		imageView.setImage(heatmap);
+		PixelWriter writer = heatmap.getPixelWriter();
+		for (int x = 0; x < heatmap.getWidth(); x++) {
+			for (int y = 0; y < heatmap.getHeight(); y ++) {
+				writer.setColor(x, y, Color.web("#0000FF"));
 			}
 		}
+		
 	}
 	
 	public void update(DataInputStream dis, final double[][] nodeArea, int sizeX, int sizeY, int startX) throws IOException {
@@ -74,6 +78,12 @@ public class MainPane extends ScrollPane {
 			double hue = BLUE_HUE + (RED_HUE - BLUE_HUE) * (temp - MIN_TEMP) / (MAX_TEMP - MIN_TEMP) ;
 			color =  Color.hsb(hue, 1.0, 1.0);			
 		}
-		headmap[x][y].setFill(color);
+		PixelWriter writer = heatmap.getPixelWriter();
+		writer.setColor(x, y, color);
+	}
+	
+	public void updateSize(double width, double height) {
+		imageView.setFitWidth(width);
+		imageView.setFitHeight(height);
 	}
 }

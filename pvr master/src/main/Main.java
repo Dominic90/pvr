@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.concurrent.CyclicBarrier;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -49,14 +51,34 @@ public class Main extends Application {
 	public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Heatmap!");
         StackPane root = new StackPane();
-        MainPane pane = new MainPane();
+        final MainPane pane = new MainPane();
         pane.setLayoutX(0);
         pane.setLayoutY(0);
-        pane.setPrefWidth(800);
-        pane.setPrefHeight(600);
+        pane.setPrefWidth(initialParameters.sizeX);
+        pane.setPrefHeight(initialParameters.sizeY);
         root.getChildren().add(pane);
-        primaryStage.setScene(new Scene(root, 800, 600));
+        Scene scene = new Scene(root, 505, 505);
+        pane.updateSize(500, 500);
+        primaryStage.setScene(scene);
         primaryStage.show();
+        scene.widthProperty().addListener(new ChangeListener<Number>() {
+           
+        	@Override 
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+                double rel = initialParameters.sizeY / initialParameters.sizeX;
+                pane.updateSize(newSceneWidth.doubleValue() - 15, newSceneWidth.doubleValue() * rel - 15);
+                
+            }
+        });
+        
+        scene.heightProperty().addListener(new ChangeListener<Number>() {
+            
+        	@Override 
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+                double rel = initialParameters.sizeX / initialParameters.sizeY;
+                pane.updateSize(newSceneHeight.doubleValue() * rel - 15, newSceneHeight.doubleValue() - 15);
+            }
+        });
         new Controller(pane, barrier).start();
 	}
 }
