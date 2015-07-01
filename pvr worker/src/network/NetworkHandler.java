@@ -15,7 +15,7 @@ public class NetworkHandler {
 	
 	private MasterConnection masterConnection;
 	private LowerNeighborConnection lowerNeighborConnection;
-	private HigherNeighborConnection higherNeighborConnection;
+	private UpperNeighborConnection higherNeighborConnection;
 	
 	private CyclicBarrier barrier;
 	
@@ -48,7 +48,7 @@ public class NetworkHandler {
 	
 	public void startInformHigher(SocketInformation higherXSocket) {
 		if (higherXSocket != null) {
-			higherNeighborConnection = new HigherNeighborConnection(higherXSocket, block, barrier);
+			higherNeighborConnection = new UpperNeighborConnection(higherXSocket, block, barrier);
         	higherNeighborConnection.start();        	
         }
 	}

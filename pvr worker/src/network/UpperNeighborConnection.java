@@ -13,7 +13,7 @@ import main.Controller;
 import util.SocketInformation;
 import cube.Block;
 
-public class HigherNeighborConnection extends Thread {
+public class UpperNeighborConnection extends Thread {
 
 	private Block block;
 	private SocketInformation higherNeighborSocket;
@@ -23,7 +23,7 @@ public class HigherNeighborConnection extends Thread {
 	private DataOutputStream dos;
 	private DataInputStream dis;
 	
-	public HigherNeighborConnection(SocketInformation higherNeighborSocket, Block block, CyclicBarrier barrier) {
+	public UpperNeighborConnection(SocketInformation higherNeighborSocket, Block block, CyclicBarrier barrier) {
 		this.higherNeighborSocket = higherNeighborSocket;
 		this.block = block;
 		this.barrier = barrier;
